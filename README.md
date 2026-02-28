@@ -8,21 +8,21 @@
 
 ---
 
-## 📖 About
+##  About
 
 Mind Influence Lab is an experimental mobile research platform designed for individuals interested in exploring the relationship between consciousness and physical reality through controlled experiments.
 
 Inspired by the **Princeton Engineering Anomalies Research (PEAR) Lab** methodology, this app combines:
 
-- 🔮 **System Entropy-Based Random Number Generator (RNG)** - Test for statistical deviations
-- 🧲 **Magnetometer Sensor** - Monitor environmental magnetic fields
-- 📊 **Accelerometer** - Track movement and stillness quality
-- 🧘 **Focus Calibration** - Binaural beats for meditation training
-- 📈 **Research Analytics** - Track patterns across sessions
+-  **System Entropy-Based Random Number Generator (RNG)** - Test for statistical deviations
+-  **Magnetometer Sensor** - Monitor environmental magnetic fields
+-  **Accelerometer** - Track movement and stillness quality
+-  **Focus Calibration** - Binaural beats for meditation training
+-  **Research Analytics** - Track patterns across sessions
 
 ---
 
-## 🎯 Features
+##  Features
 
 ### Experiment Lab
 - Real-time RNG deviation tracking
@@ -51,7 +51,7 @@ Inspired by the **Princeton Engineering Anomalies Research (PEAR) Lab** methodol
 
 ---
 
-## 📥 Download
+##  Download
 
 | Version | Release Date | Size | Download |
 | :--- | :--- | :--- | :--- |
@@ -64,7 +64,7 @@ Inspired by the **Princeton Engineering Anomalies Research (PEAR) Lab** methodol
 
 ---
 
-## 🖼️ Screenshots
+##  Screenshots
 
 ### App Interface
 
@@ -139,17 +139,17 @@ independent analysis are recommended for anyone pursuing this as research.
 
 ---
 
-## 🐛 Bug Reports & Feedback
+##  Bug Reports & Feedback
 
 Found a bug? Have a suggestion? Want to share your research findings?
 
-- 📧 **Email:** [debunking3am.thoughts@gmail.com]
-- 🐛 **Issues:** [GitHub Issues](https://github.com/WickedDarko/mind-influence-lab/issues)
-- ☕ **Support:** [Buy Me a Coffee](https://buymeacoffee.com/kannanlukom)
+-  **Email:** [debunking3am.thoughts@gmail.com]
+-  **Issues:** [GitHub Issues](https://github.com/WickedDarko/mind-influence-lab/issues)
+-  **Support:** [Buy Me a Coffee](https://buymeacoffee.com/kannanlukom)
 
 ---
 
-## 📜 License
+##  License
 
 This software is **proprietary**. See [LICENSE](LICENSE) for details.
 
@@ -157,9 +157,9 @@ This software is **proprietary**. See [LICENSE](LICENSE) for details.
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
-Built with ❤️ using [Flutter](https://flutter.dev)
+Built with [Flutter](https://flutter.dev)
 
 **Inspired by:** Princeton Engineering Anomalies Research (PEAR) Lab methodology
 
@@ -172,5 +172,6 @@ Special thanks to the consciousness research community and youtube channels for 
 **Mind Influence Lab v1.0.0**
 
 [Download Now](https://github.com/WickedDarko/mind-influence-lab/releases/latest) • [Report Issue](https://github.com/WickedDarko/mind-influence-lab/issues) • [Support Development](https://buymeacoffee.com/kannanlukom)
+
 
 </div>
