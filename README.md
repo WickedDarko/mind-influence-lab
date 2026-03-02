@@ -4,7 +4,6 @@
 
 [![Android](https://img.shields.io/badge/Android-8.0+-00E5B0?logo=android)](https://github.com/wickeddarko/mind-influence-lab/releases)
 [![Version](https://img.shields.io/badge/Version-1.2.0-00E5B0)](https://github.com/wickeddarko/mind-influence-lab/releases)
-[![License](https://img.shields.io/badge/License-MIT-00E5B0)](https://github.com/wickeddarko/mind-influence-lab/blob/main/LICENSE)
 
 ---
 
@@ -193,3 +192,4 @@ This app is **free, open, and ad-free** (v1.2). Development is funded by volunta
 **Built with Flutter. Free, offline, no tracking.**
 
 *Version 1.2.0 — March 2026*
+
