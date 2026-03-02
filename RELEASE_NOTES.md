@@ -1,96 +1,118 @@
-# Release Notes - Mind Influence Lab v1.0.0
+What's New in Mind Influence Lab v1.2.0
 
-**Release Date:** February 2026
+**Release Date:** March 2, 2026
+**Version:** 1.2.0
+**Build:** +3
+
+
+
+##  Major Changes
+
+###  Reading Room (NEW)
+A dedicated educational module explaining the scientific foundations behind the experiments.
+
+**3 Tabbed Sections:**
+1. **PEAR Lab** — Princeton Engineering Anomalies Research (1979-2007): 28 years of consciousness-RNG studies
+2. **Heart Coherence & EMF** — Physiological theories linking consciousness to electromagnetic field measurements
+3. **Observer Effect** — Quantum mechanics perspectives on consciousness and measurement
+
+**Purpose:** Understand the hypothesis before testing it. Educated users make better researchers.
+
+
+###  Deck Concept UI (Home Screen Overhaul)
+Complete redesign of the home screen for cleaner navigation and research instrument aesthetic.
+
+**Changes:**
+- Module cards replaced traditional button lists
+- Entire cards are now tappable (one-touch access)
+- Module numbering (01, 02, 03) for structured workflow
+- Time estimates per module (~10 min, ~5 min)
+- Subtle pulsating animations for "alive" feel
+- Cleaner visual hierarchy with improved text contrast
+
+
+###  Visual & UX Improvements
+- Smooth transition animations between screens
+- Improved readability on all screen sizes
+- Better visual feedback on interactions
+- Optimized for 60fps on mid-range devices
 
 ---
 
-## 🎉 Initial Release
+##  All Features (Complete List)
 
-Welcome to the first public release of Mind Influence Lab! This is an experiment tool for exploring consciousness and mind-matter interaction.
+### Module 01 — Lab (~10 min)
+| Sensor | Measurement | Purpose |
+| :--- | :--- | :--- |
+| **RNG** | Binary deviation (0/1) | Test for statistical anomalies |
+| **Magnetometer** | μT (microtesla) | Environmental magnetic field |
+| **Gyroscope** | Rotation data | Motion/orientation tracking |
+| **Accelerometer** | Movement quality | Stillness detection |
+| **Microphone** | dB (ambient noise) | Environmental sound level* |
+| **Barometer** | hPa (pressure) | Atmospheric conditions |
 
----
+*\*Microphone measures amplitude only — NO audio recorded or stored*
 
-## ✨ Features
+### Module 02 — Focus (~5 min)
+- Guided breathing animation
+- Stillness quality scoring
+- Optional binaural beats (10Hz alpha waves)
+- Pre-session calibration for better data quality
 
-### Experiment Lab
-- RNG with real-time deviation tracking
-- Magnetometer sensor monitoring
-- Accelerometer-based movement detection
-- 60-second calibration baseline
-- Live data visualization (charts & graphs)
-- Session coherence scoring (0-100)
+### Module 03 — Vault
+- Complete session history
+- Coherence score trends over time
+- Pattern detection across sessions
+- Export data as CSV for external analysis
 
-### Focus Calibration
-- Alpha wave binaural beats (10Hz)
-- Breathing animation guide
-- Auto-fade audio (5-second fade-in)
-- Session timer
-- Distraction-free meditation interface
-
-### Research Journey
-- Session history
-- Aggregate insights (avg coherence, RNG bias, validity rate)
-- Export data as CSV
-- Track patterns over time
-
-### Researcher Profile
-- XP system (50-125 XP per session)
-- Level progression (8 levels)
+### Profile System
+- XP and level progression
+- Session streaks tracking
 - Achievement badges
-- Streak tracking
-- Gamified motivation
+- Total experiment time logged
+
+
+## 🔒 Privacy & Data (Unchanged)
+
+| Principle | Implementation |
+| :--- | :--- |
+| **100% Offline** | No internet connection required |
+| **Local Storage Only** | All data stays on your device |
+| **No User Accounts** | No login, no email, no tracking |
+| **No Cloud Sync** | Data is not transmitted anywhere |
+| **No Third-Party SDKs** | No analytics, no ads (v1.2) |
+
+
+## ⚠️ Important Disclaimers
+
+1. **Research Tool Only** — This app is for educational and exploratory purposes. It is not a medical, diagnostic, or scientific device.
+
+2. **No Proven Claims** — The hypothesis that consciousness can influence random systems is **not established science**. This app provides tools for personal investigation, not validated methods.
+
+3. **Individual Results Vary** — Single sessions are statistically meaningless. Patterns across multiple sessions are required for any meaningful analysis.
+
+4. **Maintain Scientific Skepticism** — Users are encouraged to approach results critically and avoid confirmation bias.
+
+5. **Not Affiliated with PEAR Lab** — This app is inspired by PEAR Lab methodology but is not affiliated with Princeton University or the PEAR research program.
 
 ---
 
-## 📊 Technical Details
+##  Support This Research
 
-- **Minimum Android:** 8.0 (API 26)
-- **App Size:** ~25 MB
-- **Permissions:** Storage, Magnetometer, Accelerometer
-- **Internet Required:** No (fully offline)
-- **RNG Type:** System entropy-based (cryptographically secure)
+This app is **free, open, and ad-free** (v1.2). Development is funded by voluntary contributions.
 
----
-
-## 🐛 Known Issues
-
-- MIUI (Xiaomi) users may need to disable battery optimization for background audio
-- Devices without magnetometer will show limited experiment data
+-  **Buy Me a Coffee:** https://buymeacoffee.com/kannanlukom
+-  **GitHub:** https://github.com/wickeddarko/mind-influence-lab
 
 ---
 
-## 📝 Notes
+##  Feedback & Bug Reports
 
-- This is an experiment tool, not a medical device
-- Results may vary; multiple sessions recommended for patterns
-- All data stored locally; no cloud sync
-- Maintain scientific skepticism when interpreting results
+- **GitHub Issues:** https://github.com/wickeddarko/mind-influence-lab/issues
+- **Email:** debunking3am.thoughts@gmail.com
 
 ---
 
-## 🙏 Support
+**Built with Flutter. Free, offline, no tracking.**
 
-If you find this app valuable, consider supporting development:
-- ☕ [Buy Me a Coffee](https://buymeacoffee.com/kannanlukom)
-
----
-
-## 🐛 Bug Reports
-
-Found a bug? Have a suggestion?
-- 📧 Email: [debunking3am.thoughts@gmail.com]
-- 🐛 [GitHub Issues](https://github.com/WickedDarko/mind-influence-lab/issues)
-
----
-
-## 🔮 Coming in v1.1
-
-- [ ] Additional binaural frequency options
-- [ ] Enhanced data export formats
-- [ ] Improved statistical analysis
-- [ ] Bug fixes based on user feedback
-- [ ] Much more features
-
----
-
-**Thank you for downloading Mind Influence Lab!** 🧪🎯
+*Version 1.2.0 — March 2, 2026*
