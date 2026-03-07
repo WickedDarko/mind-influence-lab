@@ -1,195 +1,108 @@
-# 🧪 Mind Influence Lab
+# Mind Influence Lab
 
-**A consciousness experiment tool for exploring the relationship between focused intention and measurable physical reality.**
+**A personal consciousness research instrument for Android.**
 
-[![Android](https://img.shields.io/badge/Android-8.0+-00E5B0?logo=android)](https://github.com/wickeddarko/mind-influence-lab/releases)
-[![Version](https://img.shields.io/badge/Version-1.2.0-00E5B0)](https://github.com/wickeddarko/mind-influence-lab/releases)
+Explore the relationship between focused intention and measurable physical reality — using genuine quantum random numbers, multi-sensor environmental recording, and longitudinal statistical analysis. Inspired by the methodology of the Princeton Engineering Anomalies Research (PEAR) Lab (1979–2007).
 
----
-
-##  About
-
-Mind Influence Lab is a **personal research instrument** designed for individuals interested in exploring consciousness-matter interaction through controlled experiments.
-
-**This is not a game. This is not a meditation app. This is a tool for systematic self-inquiry.**
-
-Inspired by the Princeton Engineering Anomalies Research (PEAR) Lab methodology (1979-2007), this app combines:
-
--  **System Entropy-Based RNG** — Test for statistical deviations in random bit generation
--  **Magnetometer Sensor** — Monitor environmental magnetic field fluctuations
--  **Accelerometer & Gyroscope** — Track movement and stillness quality
--  **Ambient Noise Measurement** — Log environmental sound levels (dB)
--  **Barometer** — Record atmospheric pressure data
--  **Session Analytics** — Track patterns across multiple sessions
+> *This is a tool for systematic self-inquiry.*
 
 ---
 
-##  The Hypothesis
+## What it does
 
-**Can focused intention influence random physical systems?**
+The Advanced Lab runs structured four-phase sessions that record six independent physical channels simultaneously:
 
-This app does **not** claim to answer this question. It provides tools for **you** to collect data and draw **your own** conclusions.
+| Channel | Source | What is measured |
+|---|---|---|
+| **Quantum RNG** | Cisco Outshift QRNG API (vacuum fluctuations) | Z-score deviation from theoretical 50/50 baseline |
+| **Magnetometer** | On-device hardware | Ambient magnetic field (μT), baseline-referenced |
+| **Ambient sound** | Microphone (dB only — no audio recorded) | Environmental acoustic level |
+| **Barometer** | On-device hardware | Atmospheric pressure (hPa) |
+| **WiFi RSSI** | Connected network | Signal strength deviation across session |
+| **Bluetooth** | Nearby devices | RSSI variance — RF environment shifts |
+
+Sessions produce a z-score, phase analysis (early / mid / late intention periods computed independently), a spatial heatmap showing multi-channel convergence events, and a coherence score reflecting session data quality. All results are stored locally. The vault tracks longitudinal patterns across your full session history.
+
+---
+
+## The experimental design
+
+The hypothesis follows the logic established by PEAR: if mind-matter interaction produces any effect on random physical systems, the most statistically detectable signature would appear in a system governed by pure chance. Any systematic deviation from the expected distribution stands out against the noise floor in a way that no deterministic system allows.
+
+**Three RNG protocols test different questions:**
+
+- **Live Quantum** — Numbers generated tick-by-tick during your session. Tests real-time mind-matter interaction.
+- **Buffered Quantum** — A batch fetched at session start, consumed during your intention phase. If deviations appear here, real-time causation is ruled out — the only accounts are retrocausal, which is what PEAR's retrocognitive trials documented.
+- **Local Entropy** — Device cryptographic RNG seeded from hardware entropy. Useful as a corroborating layer; not independent of the device's physical environment and therefore not the primary experimental channel.
+
+Multi-channel convergence — when quantum RNG and an independent physical sensor deviate in the same five-second window — is the strongest result pattern, as it reduces the range of mundane explanations.
+
+---
+
+## Getting started
+
+### Requirements
+
+- Android 8.0 (API 26) or higher
+- ~55 MB storage
+- Internet connection for quantum RNG (falls back to local entropy gracefully)
+
+### Install
+
+Download the latest APK from [Releases](https://github.com/wickeddarko/mind-influence-lab/releases) and enable **Install unknown apps** for your browser or file manager in Android settings.
 
 
 
 ---
 
-##  Reading Room (v1.2 New)
+## Privacy
 
-Understand the theoretical foundations before experimenting:
+- **No accounts, no login, no tracking**
+- **No analytics or crash reporting SDKs**
+- **No audio captured** — microphone permission reads dB amplitude only; no audio is stored or transmitted
+- **One external connection** — Cisco Outshift QRNG API for random number generation only
+- All session data stays on-device
 
-| Module | Content |
-| :--- | :--- |
-| **PEAR Lab** | Historical context from Princeton's 28-year research program |
-| **Heart Coherence & EMF** | Physiological theories linking consciousness to electromagnetic fields |
-| **Observer Effect** | Quantum mechanics perspectives on consciousness and measurement |
-
-**All content is presented as hypothesis, not proven fact.** Users are invited to test these theories themselves.
+See [Privacy Policy](https://wickeddarko.github.io/mind-influence-lab/privacy-policy.html).
 
 ---
 
-##  Experiment Modules
+## Reading Room
 
-### Module 01 — Lab (~10 min)
-Run live sensor sessions with real-time data visualization.
+The app includes nine in-depth articles covering the scientific and philosophical context:
 
-| Sensor | Measurement | Purpose |
-| :--- | :--- | :--- |
-| RNG | Binary deviation (0/1) | Test for statistical anomalies |
-| Magnetometer | μT (microtesla) | Environmental magnetic field |
-| Gyroscope | Rotation data | Motion/orientation tracking |
-| Accelerometer | Movement quality | Stillness detection |
-| Microphone | dB (ambient noise) | Environmental sound level* |
-| Barometer | hPa (pressure) | Atmospheric conditions |
+1. **The Princeton RNG Experiments** — PEAR methodology, findings, and the retrocognitive trials
+2. **The Observer Effect** — The measurement problem and consciousness in quantum mechanics
+3. **Heart Fields & Coherence** — HeartMath research and bioelectromagnetics
+4. **Quantum Interpretations** — Copenhagen, Many Worlds, Transactional, and retrocausality
+5. **The RNG Hypothesis** — The three protocols and what each experimental question implies
+6. **The Science of Consciousness** — Hard problem, IIT, Orch-OR, Global Workspace Theory
+7. **Reading Your Results** — Z-scores, phase analysis, coherence, and multi-channel convergence explained
+8. **Running a Good Session** — Protocol, environment, intention framing, and control sessions
+9. **The Value of Null Results** — File drawer problem, Bayesian reasoning, and epistemic discipline
 
-*\*Microphone measures amplitude only — NO audio recorded or stored*
 
-### Module 02 — Focus (~5 min)
-Breathing exercises and stillness training for pre-session calibration.
-
-- Guided breathing animation
-- Stillness quality scoring
-- Optional binaural beats (10Hz alpha waves)
-
-### Module 03 — Vault
-Complete session history with trend analysis.
-
-- All past sessions with full data
-- Coherence score trends over time
-- Export data as CSV for external analysis
-- Pattern detection across sessions
 
 ---
 
-## 🔒 Privacy & Data
+## Support
 
-| Principle | Implementation |
-| :--- | :--- |
-| **100% Offline** | No internet connection required |
-| **Local Storage Only** | All data stays on your device |
-| **No User Accounts** | No login, no email, no tracking |
-| **No Cloud Sync** | Data is not transmitted anywhere |
-| **No Third-Party SDKs** | No analytics, no ads (v1.2) |
-| **User-Controlled Export** | CSV export is manual and optional |
+Free and ad-free. If you find it useful:
 
-### Sensor Permissions
-
-| Sensor | Permission | Why | Data Stored |
-| :--- | :--- | :--- | :--- |
-| Magnetometer | None (hardware) | Environmental context | μT values only |
-| Accelerometer | None (hardware) | Movement detection | Motion quality score |
-| Gyroscope | None (hardware) | Rotation tracking | Rotation data |
-| Microphone | `RECORD_AUDIO` | Ambient noise (dB) | **NO audio recorded** — dB values only |
-| Barometer | None (hardware) | Atmospheric pressure | hPa values only |
-
-**Microphone Clarification:** The app measures sound amplitude (decibels) only. No audio is recorded, stored, or transmitted. Audio data is processed in real-time and immediately discarded.
+[☕ Buy Me a Coffee](https://buymeacoffee.com/kannanlukom) · [🐙 GitHub Sponsors](https://github.com/sponsors/wickeddarko)
 
 ---
 
+## Disclaimer
 
-##  Technical Specifications
-
-| Specification | Value |
-| :--- | :--- |
-| **Minimum Android** | 8.0 (API 26) |
-| **App Size** | ~55 MB |
-| **Framework** | Flutter (Dart) |
-| **Architecture** | Local-first, offline-capable |
-| **Backend** | None (all processing on-device) |
-| **Database** | SharedPreferences + Local JSON files |
+This app is for educational and exploratory purposes only. It is not a medical, diagnostic, or scientific device. The hypothesis that consciousness can influence random physical systems is not established science. Single sessions are statistically inconclusive — patterns across many sessions are required for any meaningful analysis. Not affiliated with Princeton University or the PEAR research program.
 
 ---
 
-##  Version History
+## License
 
-### v1.2.0 (Current) — UI Polish + Reading Room
--  **Reading Room** — 3-tab educational module (PEAR Lab, Heart Coherence, Observer Effect)
--  **Deck Concept UI** — Redesigned home screen with actionable cards
--  **Animations** — Subtle pulsating waves and patterns for "alive" feel
--  **Improved Navigation** — Entire cards are now tappable (no separate buttons)
--  **UX Refinements** — Smoother transitions, cleaner visual hierarchy
-
-### v1.1.0 — Environmental Sensors
--  Microphone (ambient noise measurement)
--  Barometer (atmospheric pressure)
--  Gyroscope (rotation tracking)
--  Sensor toggles (enable/disable per session)
--  Pre-permission disclaimer for microphone
-
-### v1.0.0 — Initial Release
--  RNG system (system entropy-based)
--  Magnetometer monitoring
--  Accelerometer (movement detection)
--  Session data saving + export
--  Profile system (XP, levels, streaks)
--  Focus calibration (binaural beats)
+See [LICENSE](LICENSE) for details.
 
 ---
 
-## ⚠️ Disclaimers
-
-1. **Research Tool Only** — This app is for educational and exploratory purposes. It is not a medical, diagnostic, or scientific device.
-
-2. **No Proven Claims** — The hypothesis that consciousness can influence random systems is **not established science**. This app provides tools for personal investigation, not validated methods.
-
-3. **Individual Results Vary** — Single sessions are statistically meaningless. Patterns across multiple sessions are required for any meaningful analysis.
-
-4. **Maintain Scientific Skepticism** — Users are encouraged to approach results critically and avoid confirmation bias.
-
-5. **Not Affiliated with PEAR Lab** — This app is inspired by PEAR Lab methodology but is not affiliated with Princeton University or the PEAR research program.
-
----
-
-##  Support This Research
-
-This app is **free, open, and ad-free** (v1.2). Development is funded by voluntary contributions.
-
-| Method | Link |
-| :--- | :--- |
-| **Buy Me a Coffee** | [☕ Support Link](https://buymeacoffee.com/kannanlukom) |
-| **GitHub Sponsors** | [🐙 Sponsor Page](https://github.com/sponsors/wickeddarko) |
-
-**Your support helps keep this tool free and independent.**
-
----
-
-##  Contact & Feedback
-
-| Purpose | Method |
-| :--- | :--- |
-| **Bug Reports** | [GitHub Issues](https://github.com/wickeddarko/mind-influence-lab/issues) |
-| **Feature Requests** | [GitHub Discussions](https://github.com/wickeddarko/mind-influence-lab/discussions) |
-| **Email** | debunking3am.thoughts@gmail.com |
-
----
-
-##  License
-
- See [LICENSE](https://github.com/wickeddarko/mind-influence-lab/blob/main/LICENSE) for details.
-
----
-
-**Built with Flutter. Free, offline, no tracking.**
-
-*Version 1.2.0 — March 2026*
-
+*Built with Flutter · Free · Offline-first · No tracking · v2.0.0*
