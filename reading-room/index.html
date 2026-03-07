@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reading Room — Mind Influence Lab</title>
+<meta name="description" content="Nine in-depth articles on quantum RNG research, PEAR Lab experiments, consciousness science, retrocausality, and how to interpret your own session data."/>
+<link rel="canonical" href="https://wickeddarko.github.io/mind-influence-lab/reading-room/"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #030308;
+  --red: #FF6B6B;
+  --teal: #00E5B0;
+  --amber: #FF9F43;
+  --purple: #B48CFF;
+  --cyan: #00B8D4;
+  --violet: #E040FB;
+  --indigo: #7B8CDE;
+  --dim: rgba(255,255,255,0.22);
+  --body: rgba(255,255,255,0.52);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(3,3,8,0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.nav-back {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s;
+}
+.nav-back:hover { color: var(--teal); }
+
+.nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.3px;
+}
+
+.nav-download {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.25);
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-download:hover { color: rgba(255,255,255,0.55); }
+
+/* ── LAYOUT ── */
+.shell {
+  display: flex;
+  padding-top: 57px;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(255,255,255,0.05);
+  position: sticky;
+  top: 57px;
+  height: calc(100vh - 57px);
+  overflow-y: auto;
+  padding: 28px 0 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+.sidebar-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 2.5px;
+  color: rgba(255,255,255,0.2);
+  text-transform: uppercase;
+  padding: 0 24px;
+  margin-bottom: 16px;
+}
+
+.article-tab {
+  padding: 14px 24px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.18s;
+  position: relative;
+}
+.article-tab:hover { background: rgba(255,255,255,0.02); }
+.article-tab.active {
+  background: rgba(255,255,255,0.03);
+}
+
+.tab-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  opacity: 0.6;
+}
+.tab-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.3;
+  transition: color 0.18s;
+}
+.article-tab.active .tab-title,
+.article-tab:hover .tab-title { color: rgba(255,255,255,0.85); }
+
+.tab-time {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  color: rgba(255,255,255,0.18);
+  margin-top: 3px;
+}
+
+/* ── MAIN CONTENT ── */
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 48px clamp(24px, 5vw, 80px) 80px;
+  max-width: 780px;
+}
+
+/* ── ARTICLE PANELS ── */
+.article-panel { display: none; }
+.article-panel.active { display: block; }
+
+.article-hero {
+  border-radius: 4px;
+  padding: 32px 36px;
+  margin-bottom: 40px;
+  border: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+}
+.article-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+}
+
+.hero-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  opacity: 0.65;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.hero-sub {
+  font-size: 14px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.38);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.hero-meta {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.2);
+  text-transform: uppercase;
+}
+
+/* ── SECTIONS ── */
+.section {
+  margin-bottom: 36px;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.section-bar {
+  width: 3px;
+  height: 20px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  opacity: 0.65;
+}
+.section-heading h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+}
+.section p {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--body);
+  line-height: 1.9;
+}
+.section p + p { margin-top: 14px; }
+
+/* ── DISCLAIMER ── */
+.disclaimer {
+  margin-top: 40px;
+  padding: 18px 22px;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 4px;
+  background: rgba(255,255,255,0.02);
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.2);
+  line-height: 1.75;
+}
+
+/* ── ARTICLE NAV (prev/next) ── */
+.article-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 52px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.article-nav-btn {
+  flex: 1;
+  padding: 18px 20px;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.18s;
+  background: transparent;
+}
+.article-nav-btn:hover { border-color: rgba(255,255,255,0.16); background: rgba(255,255,255,0.02); }
+.article-nav-btn.next { text-align: right; }
+.nav-btn-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.2);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.nav-btn-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+}
+
+/* ── HUB (index) ── */
+.hub-hero {
+  padding: 40px 0 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 40px;
+}
+.hub-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: rgba(0,229,176,0.55);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.hub-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(38px, 5vw, 56px);
+  font-weight: 300;
+  line-height: 1.0;
+  letter-spacing: -1px;
+  color: #fff;
+  margin-bottom: 18px;
+}
+.hub-title em { font-style: italic; color: rgba(0,229,176,0.85); }
+.hub-body {
+  font-size: 15px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.38);
+  line-height: 1.8;
+  max-width: 560px;
+}
+
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.article-card {
+  padding: 22px 24px;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.18s;
+  background: rgba(255,255,255,0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.article-card:hover {
+  border-color: rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-1px);
+}
+.card-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.2;
+}
+.card-sub {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.28);
+  line-height: 1.5;
+  flex: 1;
+}
+.card-time {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.18);
+}
+
+/* ── MOBILE ── */
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .main { padding: 28px 20px 60px; }
+  nav { padding: 14px 20px; }
+  .nav-download { display: none; }
+  .article-hero { padding: 24px 22px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html" class="nav-back">← Mind Influence Lab</a>
+  <span class="nav-title">Reading Room</span>
+  <a href="https://github.com/WickedDarko/mind-influence-lab/releases" class="nav-download">↓ Download App</a>
+</nav>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Articles</div>
+
+    <div class="article-tab active" data-id="hub" style="border-left-color: rgba(0,229,176,0.5)">
+      <div class="tab-tag" style="color:rgba(0,229,176,0.6)">Overview</div>
+      <div class="tab-title">Reading Room</div>
+      <div class="tab-time">All articles</div>
+    </div>
+
+    <div class="article-tab" data-id="pear" style="">
+      <div class="tab-tag" style="color:rgba(0,229,176,0.6)">Foundation</div>
+      <div class="tab-title">The Princeton RNG Experiments</div>
+      <div class="tab-time">10 min read</div>
+    </div>
+
+    <div class="article-tab" data-id="observer">
+      <div class="tab-tag" style="color:rgba(0,184,212,0.6)">Theory</div>
+      <div class="tab-title">The Observer Effect</div>
+      <div class="tab-time">10 min read</div>
+    </div>
+
+    <div class="article-tab" data-id="heart">
+      <div class="tab-tag" style="color:rgba(180,140,255,0.6)">Evidence</div>
+      <div class="tab-title">Heart Fields & Coherence</div>
+      <div class="tab-time">7 min read</div>
+    </div>
+
+    <div class="article-tab" data-id="quantum">
+      <div class="tab-tag" style="color:rgba(255,159,67,0.6)">Physics</div>
+      <div class="tab-title">Quantum Interpretations</div>
+      <div class="tab-time">12 min read</div>
+    </div>
+
+    <div class="article-tab" data-id="rng">
+      <div class="tab-tag" style="color:rgba(255,107,107,0.6)">Method</div>
+      <div class="tab-title">The RNG Hypothesis</div>
+      <div class="tab-time">11 min read</div>
+    </div>
+
+    <div class="article-tab" data-id="consciousness">
+      <div class="tab-tag" style="color:rgba(224,64,251,0.6)">Consciousness</div>
+      <div class="tab-title">The Science of Consciousness</div>
+      <div class="tab-time">13 min read</div>
+    </div>
+
+    <div class="article-tab" data-id="protocol">
+      <div class="tab-tag" style="color:rgba(0,229,176,0.6)">Practice</div>
+      <div class="tab-title">Running a Good Session</div>
+      <div class="tab-time">10 min read</div>
+    </div>
+
+    <div class="article-tab" data-id="null">
+      <div class="tab-tag" style="color:rgba(123,140,222,0.6)">Epistemology</div>
+      <div class="tab-title">The Value of Null Results</div>
+      <div class="tab-time">8 min read</div>
+    </div>
+
+    <div class="article-tab" data-id="glossary">
+      <div class="tab-tag" style="color:rgba(255,107,107,0.6)">Reference</div>
+      <div class="tab-title">Glossary of Key Terms</div>
+      <div class="tab-time">12 min read</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HUB -->
+    <div class="article-panel active" id="panel-hub">
+      <div class="hub-hero">
+        <div class="hub-eyebrow">Mind Influence Lab · Reading Room</div>
+        <h1 class="hub-title">The science<br>behind the <em>experiment.</em></h1>
+        <p class="hub-body">Nine articles covering the research foundations, physical theory, experimental methodology, and honest epistemology of consciousness and random number generator research. Written to be read critically.</p>
+      </div>
+      <div class="article-grid">
+        <div class="article-card" data-goto="pear" style="border-color:rgba(0,229,176,0.12)">
+          <div class="card-tag" style="color:rgba(0,229,176,0.6)">Foundation</div>
+          <div class="card-title" style="color:rgba(255,255,255,0.8)">The Princeton RNG Experiments</div>
+          <div class="card-sub">Twenty-six years, 340 operators, 2.5 million trials. What the PEAR lab actually found — and what its critics said.</div>
+          <div class="card-time">10 min read</div>
+        </div>
+        <div class="article-card" data-goto="observer" style="border-color:rgba(0,184,212,0.1)">
+          <div class="card-tag" style="color:rgba(0,184,212,0.6)">Theory</div>
+          <div class="card-title">The Observer Effect</div>
+          <div class="card-sub">Quantum mechanics and the unresolved role of observation. The measurement problem and why it still matters.</div>
+          <div class="card-time">10 min read</div>
+        </div>
+        <div class="article-card" data-goto="heart" style="border-color:rgba(180,140,255,0.1)">
+          <div class="card-tag" style="color:rgba(180,140,255,0.6)">Evidence</div>
+          <div class="card-title">Heart Fields & Coherence</div>
+          <div class="card-sub">HeartMath, bioelectromagnetics, and the measurable electromagnetic field of the heart.</div>
+          <div class="card-time">7 min read</div>
+        </div>
+        <div class="article-card" data-goto="quantum" style="border-color:rgba(255,159,67,0.1)">
+          <div class="card-tag" style="color:rgba(255,159,67,0.6)">Physics</div>
+          <div class="card-title">Quantum Interpretations</div>
+          <div class="card-sub">Copenhagen, Many Worlds, the Transactional Interpretation, and what retrocausality actually means physically.</div>
+          <div class="card-time">12 min read</div>
+        </div>
+        <div class="article-card" data-goto="rng" style="border-color:rgba(255,107,107,0.1)">
+          <div class="card-tag" style="color:rgba(255,107,107,0.6)">Method</div>
+          <div class="card-title">The RNG Hypothesis</div>
+          <div class="card-sub">Three protocols, three different experimental questions. What each RNG mode actually tests.</div>
+          <div class="card-time">11 min read</div>
+        </div>
+        <div class="article-card" data-goto="consciousness" style="border-color:rgba(224,64,251,0.1)">
+          <div class="card-tag" style="color:rgba(224,64,251,0.6)">Consciousness</div>
+          <div class="card-title">The Science of Consciousness</div>
+          <div class="card-sub">The hard problem, IIT, Orch-OR, Global Workspace Theory, and panpsychism. The honest state of the field.</div>
+          <div class="card-time">13 min read</div>
+        </div>
+        <div class="article-card" data-goto="protocol" style="border-color:rgba(0,229,176,0.1)">
+          <div class="card-tag" style="color:rgba(0,229,176,0.6)">Practice</div>
+          <div class="card-title">Running a Good Session</div>
+          <div class="card-sub">Environment, stillness, intention posture, session duration, and control sessions. Protocol details that affect your data.</div>
+          <div class="card-time">10 min read</div>
+        </div>
+        <div class="article-card" data-goto="null" style="border-color:rgba(123,140,222,0.1)">
+          <div class="card-tag" style="color:rgba(123,140,222,0.6)">Epistemology</div>
+          <div class="card-title">The Value of Null Results</div>
+          <div class="card-sub">Why nothing happening is a result. The file drawer problem, Bayesian reasoning, and how not to fool yourself.</div>
+          <div class="card-time">8 min read</div>
+        </div>
+        <div class="article-card" data-goto="glossary" style="border-color:rgba(255,107,107,0.1)">
+          <div class="card-tag" style="color:rgba(255,107,107,0.6)">Reference</div>
+          <div class="card-title">Glossary of Key Terms</div>
+          <div class="card-sub">Precise definitions: z-score, entropy, QRNG, wavefunction, retrocausality, coherence, p-value, effect size, decoherence.</div>
+          <div class="card-time">12 min read</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARTICLE 1: PEAR -->
+    <div class="article-panel" id="panel-pear">
+      <div class="article-hero" style="background:rgba(0,229,176,0.03);border-color:rgba(0,229,176,0.12)">
+        <div class="hero-tag" style="color:rgba(0,229,176,0.7)">Foundation</div>
+        <h1 class="hero-title">The Princeton RNG Experiments</h1>
+        <p class="hero-sub">Twenty-six years of anomalous data</p>
+        <div class="hero-meta">10 min read &nbsp;·&nbsp; Princeton Engineering Anomalies Research</div>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>The Princeton Engineering Anomalies Research Lab</h3></div>
+        <p>Between 1979 and 2007, the Princeton Engineering Anomalies Research (PEAR) laboratory at Princeton University conducted one of the most sustained and methodologically rigorous investigations into mind-matter interaction ever undertaken. Under the direction of Robert Jahn, Dean Emeritus of Engineering, the lab accumulated over a million experimental trials examining whether human intention could produce statistically measurable deviations in the output of Random Number Generators (RNGs).</p>
+        <p>The experimental setup was deliberately engineered to eliminate confounds. A microelectronic RNG would continuously generate binary bits — ones and zeros — at high frequency, each theoretically governed only by quantum-level thermal noise. Operators would sit at a distance, sometimes in a separate room, and simply hold an intention: "high," meaning more ones; "low," meaning more zeros; or "baseline," meaning no intention at all. Neither the operator nor the machine made physical contact that could influence output.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>What the Data Showed</h3></div>
+        <p>Across 340 operators and more than 2.5 million individual experimental series, PEAR documented a small but statistically persistent deviation. The mean shift was modest — approximately 0.1% above or below theoretical chance — but because of the sheer volume of trials, the cumulative probability against chance reached odds of over a trillion to one.</p>
+        <p>Critically, the effect held across different operators, different machine types, different locations, and — in one of the more provocative findings — across time. In "retrocognitive" trials, operators were asked to hold intentions about RNG output sequences that had already been generated and stored, but not yet viewed. These trials showed effect sizes statistically comparable to real-time experiments. The PEAR team documented this retrocausal pattern across thousands of trials and found no conventional explanation that accounted for it.</p>
+        <p>The data also showed clear individual variation: some operators consistently produced strong deviations in both directions, while others showed little effect. This was not predicted by any model of physical noise but is consistent with the hypothesis that some individual-level factor was contributing to output.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>The Global Consciousness Project</h3></div>
+        <p>In 1998, PEAR researcher Roger Nelson launched the Global Consciousness Project (GCP) — an extension of the RNG methodology to a global scale. A network of hardware RNGs, running continuously at sites around the world, generates streams of random data around the clock. The hypothesis is that moments of widespread, coherent human attention — major world events, disasters, celebrations — would produce correlated deviations across the network that could not be explained by chance.</p>
+        <p>The GCP has documented anomalous correlations around events including the September 11 attacks, the death of Princess Diana, New Year celebrations, and major earthquakes. The most discussed finding concerns a deviation in GCP data that appeared to begin approximately four hours before the first impact on September 11, 2001 — a pre-event signal that, if not an artefact of analysis, would imply something deeply strange about the relationship between collective attention and physical randomness.</p>
+        <p>The GCP data is publicly available and has been re-analysed independently multiple times, with varying conclusions. The project remains active and the debate unresolved.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>Retrocausality: Intention and Already-Generated Numbers</h3></div>
+        <p>The PEAR retrocognitive trials raise a specific question directly relevant to how this app works. In Buffered Quantum mode, a batch of quantum random numbers is generated by the Cisco Outshift server at the start of your session — before you have consciously applied any intention. You then consume those numbers tick by tick during your session.</p>
+        <p>If deviations appear in your buffered session data, they could not be the result of real-time intention influencing generation — the numbers already exist. The only mechanisms that could account for a genuine effect are: (1) retrocausality, where your present intention reaches backward to influence the already-determined output; (2) presentiment, a related idea in which information about a future state is available to a system before the state occurs; or (3) a non-local correlation between the state of your intention at session start — when the numbers are generated — and your intention state throughout. None of these are comfortable within classical physics. All have been proposed within serious theoretical frameworks.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>Replication and Criticism</h3></div>
+        <p>The PEAR findings were not universally accepted. Critics raised concerns about potential methodological flaws including operator cueing, selective reporting, and the statistical treatment of experimental series as the unit of analysis rather than individual trials. Several attempted replications produced mixed results — some finding effects of similar magnitude, others finding nothing.</p>
+        <p>A 2006 meta-analysis by Bösch, Steinkamp and Boller examining 380 studies found a small but significant overall effect, while simultaneously noting a pattern consistent with publication bias. Their conclusion was measured: the effect, if real, was far too small to constitute strong evidence from any single study, but could not be entirely dismissed across the aggregate database. The PEAR lab closed in 2007 with its data archived. The scientific community has not reached consensus. What the PEAR record demonstrates most clearly is that the question has been taken seriously, studied rigorously, and remains genuinely open.</p>
+      </div>
+      <div class="disclaimer">The research referenced here is presented for educational purposes. This app does not make therapeutic, diagnostic, or scientific claims. All findings cited are from published or publicly available sources and should be evaluated critically.</div>
+      <div class="article-nav">
+        <div class="article-nav-btn" data-goto="hub"><div class="nav-btn-label">← Back to</div><div class="nav-btn-title">Reading Room</div></div>
+        <div class="article-nav-btn next" data-goto="observer"><div class="nav-btn-label">Next →</div><div class="nav-btn-title">The Observer Effect</div></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE 2: OBSERVER EFFECT -->
+    <div class="article-panel" id="panel-observer">
+      <div class="article-hero" style="background:rgba(0,184,212,0.03);border-color:rgba(0,184,212,0.12)">
+        <div class="hero-tag" style="color:rgba(0,184,212,0.7)">Theory</div>
+        <h1 class="hero-title">The Observer Effect</h1>
+        <p class="hero-sub">Quantum mechanics and the role of consciousness</p>
+        <div class="hero-meta">10 min read &nbsp;·&nbsp; Foundations of Quantum Mechanics</div>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--cyan)"></div><h3>A Measurement Problem</h3></div>
+        <p>Quantum mechanics, the most precisely verified theory in the history of physics, contains at its core a feature that has troubled physicists since its formulation in the 1920s. Before a quantum system is measured, it exists as a superposition of multiple possible states simultaneously. The act of measurement — or more precisely, the act of observation — causes this superposition to resolve into a single definite outcome. This is called wavefunction collapse.</p>
+        <p>The mathematics is unambiguous. What remains debated is what triggers collapse. The orthodox Copenhagen interpretation essentially placed this question outside the scope of physics: measurement happens, collapse happens, the outcomes match prediction. The mechanism need not be asked about. But this pragmatism left an uncomfortable gap. If everything physical is, at base, quantum — including the measuring instrument, the experimenter's neurons, and the information processing that constitutes "observation" — then why does quantum superposition give way to classical definite outcomes at all? This is the measurement problem, and it has not been formally resolved.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--cyan)"></div><h3>Consciousness as Collapse Agent</h3></div>
+        <p>A minority but non-trivial position in the foundations of quantum mechanics holds that consciousness itself plays a role in wavefunction collapse. This view was seriously entertained by John von Neumann, who in his 1932 mathematical formulation of quantum mechanics concluded that the only logically consistent place in the measurement chain for a definite cut from quantum to classical was at the conscious observer's experience.</p>
+        <p>Eugene Wigner developed this further with his "Wigner's Friend" thought experiment: if a friend measures a quantum system inside a sealed lab, is the system in a definite state relative to the friend before Wigner himself observes the outcome? Different interpretations give incompatible answers, and recent experiments by Proietti et al. (2019) have tested variants of this scenario with polarised photons, finding results that challenge any simple account of observer-independent facts.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--cyan)"></div><h3>The Double-Slit Experiment and Intent</h3></div>
+        <p>When particles are fired at a barrier with two slits, they produce an interference pattern — as if each particle passes through both slits simultaneously as a wave. When a detector is placed to determine which slit a particle actually passes through, the interference pattern disappears. The presence or absence of accessible information — not the physical act of detection, but whether the path information exists in principle anywhere in the universe — determines which behaviour is observed.</p>
+        <p>Dean Radin and colleagues at the Institute of Noetic Sciences conducted a series of studies from 2012 to 2019 in which experienced meditators directed focused attention toward a double-slit optical apparatus. Across multiple trials, they reported small but statistically significant reductions in the interference pattern during attention conditions. These results remain controversial and have not been independently replicated under fully blinded conditions. They are cited as an area of active investigation, not established fact.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--cyan)"></div><h3>What Remains Open</h3></div>
+        <p>The honest position is this: quantum mechanics does not prove that consciousness affects reality, but it establishes that reality is fundamentally stranger than classical physics suggested, and that the role of observation in defining physical states is non-trivial at the foundational level. The question this app explores is not whether quantum collapse explains the PEAR results — that would be a significant overreach. It is the more tractable personal question: across your own sessions and states, does your data show patterns that classical chance alone does not easily account for?</p>
+      </div>
+      <div class="disclaimer">The research referenced here is presented for educational purposes. This app does not make therapeutic, diagnostic, or scientific claims.</div>
+      <div class="article-nav">
+        <div class="article-nav-btn" data-goto="pear"><div class="nav-btn-label">← Previous</div><div class="nav-btn-title">The Princeton RNG Experiments</div></div>
+        <div class="article-nav-btn next" data-goto="heart"><div class="nav-btn-label">Next →</div><div class="nav-btn-title">Heart Fields & Coherence</div></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE 3: HEART COHERENCE -->
+    <div class="article-panel" id="panel-heart">
+      <div class="article-hero" style="background:rgba(180,140,255,0.03);border-color:rgba(180,140,255,0.12)">
+        <div class="hero-tag" style="color:rgba(180,140,255,0.7)">Evidence</div>
+        <h1 class="hero-title">Heart Fields & Coherence</h1>
+        <p class="hero-sub">HeartMath and bioelectromagnetic research</p>
+        <div class="hero-meta">7 min read &nbsp;·&nbsp; Bioelectromagnetics · HRV Research</div>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--purple)"></div><h3>The Heart as an Electromagnetic Organ</h3></div>
+        <p>The heart generates the strongest electromagnetic field in the body — roughly 100 times greater in amplitude than the brain's electrical activity, and detectable with sensitive instruments several feet from the body. This is not speculative; it is standard biophysics, measurable with the magnetometers used in medical magnetocardiography.</p>
+        <p>The HeartMath Institute, founded in 1991, has built a research programme around the hypothesis that the coherence of this field — specifically, the degree to which heart rate variability (HRV) follows a smooth, rhythmically ordered pattern — correlates with psychological states, cognitive performance, and possibly interactions between individuals in proximity. HRV coherence is well established as a health metric. High coherence is associated with reduced cortisol, improved immune function, and better emotional regulation.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--purple)"></div><h3>The Global Coherence Initiative</h3></div>
+        <p>HeartMath's more provocative research concerns the hypothesis that collective human emotional states may be detectable as changes in Earth's magnetic field. In 2003, HeartMath launched the Global Coherence Initiative, installing a network of magnetometers worldwide to monitor geomagnetic field variations continuously.</p>
+        <p>The magnetometer in your device — the same sensor used to orient your screen — measures local fluctuations in the magnetic field. Your baseline phase establishes a local environmental reference. Deviations during the experiment phase are what this app tracks.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--purple)"></div><h3>Bioelectromagnetics and Intention</h3></div>
+        <p>A related body of work examines whether human intention can produce measurable effects on biological systems under blinded conditions. William Braud and Marilyn Schlitz conducted studies in the 1980s and 90s in which "influencers" attempted to affect the electrodermal activity of distant subjects, finding small but replicable effects across hundreds of trials.</p>
+        <p>Criticisms focus on blinding procedures and effect sizes. Supporters argue that the cumulative evidence across multiple independent labs, while individually modest, is harder to dismiss than any single study. This is the same statistical logic that applies to your own longitudinal data — single sessions carry little weight, but patterns across many sessions become progressively harder to attribute to chance alone.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--purple)"></div><h3>A Note on Evidence Standards</h3></div>
+        <p>None of the research described in this Reading Room constitutes proof of mind-matter interaction. What this body of work establishes is that these are serious scientific questions pursued by serious researchers at credentialed institutions, and that the evidence — while not conclusive — is not trivially dismissible. You are not being asked to believe anything. You are being invited to look at your own data.</p>
+      </div>
+      <div class="disclaimer">The research referenced here is presented for educational purposes. This app does not make therapeutic, diagnostic, or scientific claims.</div>
+      <div class="article-nav">
+        <div class="article-nav-btn" data-goto="observer"><div class="nav-btn-label">← Previous</div><div class="nav-btn-title">The Observer Effect</div></div>
+        <div class="article-nav-btn next" data-goto="quantum"><div class="nav-btn-label">Next →</div><div class="nav-btn-title">Quantum Interpretations</div></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE 4: QUANTUM INTERPRETATIONS -->
+    <div class="article-panel" id="panel-quantum">
+      <div class="article-hero" style="background:rgba(255,159,67,0.03);border-color:rgba(255,159,67,0.12)">
+        <div class="hero-tag" style="color:rgba(255,159,67,0.7)">Physics</div>
+        <h1 class="hero-title">Quantum Interpretations</h1>
+        <p class="hero-sub">What collapse means — and whether time flows one way</p>
+        <div class="hero-meta">12 min read &nbsp;·&nbsp; Foundations of Physics</div>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--amber)"></div><h3>Why Interpretation Matters</h3></div>
+        <p>Quantum mechanics is extraordinarily successful as a predictive tool. Every experiment it has been asked to predict, it has predicted correctly — often to ten or more decimal places. But the theory's mathematical formalism is silent on one question: what is actually happening between measurements? This silence has given rise to a family of competing interpretations — not competing predictions, since they all agree on what will be measured, but competing pictures of what quantum reality is like when no one is looking.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--amber)"></div><h3>Copenhagen: Pragmatic Silence</h3></div>
+        <p>The Copenhagen interpretation, developed by Niels Bohr and Werner Heisenberg in the late 1920s, is the oldest and most widely taught. Its core instruction is almost anti-philosophical: do not ask what the quantum system is doing between measurements, because that question has no physical meaning. Only measurement outcomes are real. The wavefunction is a calculational tool, not a description of a real physical object.</p>
+        <p>This works perfectly as a recipe for doing physics. It becomes uncomfortable when you ask where "measurement" begins and ends, whether a detector counts as an observer, whether a recording device counts, or whether human consciousness is required. Copenhagen's pragmatism leaves these questions unanswered — by design.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--amber)"></div><h3>Many Worlds: Everything Happens</h3></div>
+        <p>The Many Worlds interpretation, proposed by Hugh Everett in 1957, takes the opposite approach: the wavefunction never collapses. Every time a quantum event has multiple possible outcomes, the universe literally branches — all outcomes occur, in different branches of a universal wavefunction. There is no collapse, no special role for observers, no measurement problem.</p>
+        <p>Many Worlds is mathematically elegant and avoids the measurement problem entirely. It has no room for mind-matter interaction of the kind RNG research proposes: in Many Worlds, you cannot influence which outcome occurs because all outcomes already occur.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--amber)"></div><h3>The Transactional Interpretation and Retrocausality</h3></div>
+        <p>The Transactional Interpretation, developed by physicist John Cramer in 1986, offers the most direct theoretical support for the retrocausal phenomena observed in PEAR's retrocognitive trials. It proposes that quantum events involve two waves: a forward-in-time "offer wave" emitted by a quantum source, and a backward-in-time "confirmation wave" emitted by the absorber. A quantum event is the "handshake" between these two waves — a transaction that spans time in both directions.</p>
+        <p>This is not a fringe position. The mathematics is rigorous and consistent with all standard quantum predictions. Retrocausality — the influence of future states on past ones — is not forbidden by physics; it is forbidden by our intuitions about time. At the quantum level, the laws of physics are time-symmetric.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--amber)"></div><h3>The Delayed-Choice Experiment</h3></div>
+        <p>Wheeler's delayed-choice experiment makes retrocausality tangible. In the standard double-slit setup, the experimenter decides whether to observe which slit the photon passes through before it reaches the slits. Wheeler showed — and experimenters later confirmed — that this decision can be made after the photon has already passed through the slits. The photon responds to a measurement decision that had not yet been made at the time it "chose" its path.</p>
+        <p>In a cosmic variant, Wheeler proposed using gravitational lensing from a quasar to create two paths for photons that left the quasar billions of years ago. A measurement decision made today, in principle, determines whether those ancient photons travelled as waves or particles on their billion-year journey. This is not a metaphor. It is experimental physics. The past is not fully fixed until future observations are made — at the quantum level.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--amber)"></div><h3>What This Means for the Three RNG Protocols</h3></div>
+        <p>In Live Quantum mode, numbers are generated at the exact tick they are consumed. If intention affects the output, the most straightforward account is real-time mind-matter interaction — present consciousness influencing the outcome of quantum events occurring simultaneously.</p>
+        <p>In Buffered Quantum mode, numbers are generated before your session begins. If deviations appear, a real-time causal account is ruled out. The Transactional Interpretation offers the only mainstream theoretical framework that accommodates this: your present intention reaching backward via a quantum handshake.</p>
+        <p>In Local Entropy mode, numbers are seeded from physical device entropy. If deviations occur in local entropy sessions and correlate with your magnetometer and RF data, you have multiple independent physical systems deviating simultaneously — the kind of multi-stream convergence that is hardest to explain as artefact.</p>
+      </div>
+      <div class="disclaimer">The research referenced here is presented for educational purposes. This app does not make therapeutic, diagnostic, or scientific claims.</div>
+      <div class="article-nav">
+        <div class="article-nav-btn" data-goto="heart"><div class="nav-btn-label">← Previous</div><div class="nav-btn-title">Heart Fields & Coherence</div></div>
+        <div class="article-nav-btn next" data-goto="rng"><div class="nav-btn-label">Next →</div><div class="nav-btn-title">The RNG Hypothesis</div></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE 5: RNG HYPOTHESIS -->
+    <div class="article-panel" id="panel-rng">
+      <div class="article-hero" style="background:rgba(255,107,107,0.03);border-color:rgba(255,107,107,0.12)">
+        <div class="hero-tag" style="color:rgba(255,107,107,0.7)">Method</div>
+        <h1 class="hero-title">The RNG Hypothesis</h1>
+        <p class="hero-sub">Three protocols, three experimental questions</p>
+        <div class="hero-meta">11 min read &nbsp;·&nbsp; Experimental Method · Quantum Randomness</div>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>What Random Numbers Have to Do With Consciousness</h3></div>
+        <p>The use of random number generators in consciousness research traces to a simple but profound observation: if mind can influence matter, the most detectable signature would appear in systems that are otherwise governed by pure chance. A deterministic system is hard to "move" in a statistically detectable way because its behaviour is expected and reproducible. A random system, by contrast, has no expected trajectory. Any systematic deviation from chance behaviour stands out against the statistical background.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Live Quantum: Direct Causation</h3></div>
+        <p>In Live Quantum mode, each tick of the session requests a fresh batch of quantum random numbers from the Cisco Outshift server. These numbers are generated from genuine quantum physical processes — their values are undetermined until the moment of measurement, collapsing from superposition at the exact instant they are requested. If intention affects the output of this mode, the most straightforward account is real-time mind-matter interaction: present consciousness influencing the outcome of quantum events occurring simultaneously.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Buffered Quantum: Testing Retrocausality</h3></div>
+        <p>In Buffered Quantum mode, a batch of quantum numbers is fetched once at the start of your session. The quantum events that produced those numbers have already occurred. You then spend your session applying intention to a data stream that physically predates it. This is not a limitation. It is a different experimental question. If deviations appear in buffered sessions, they cannot be explained by real-time mind-matter interaction. Retrocausality follows naturally from the time-symmetry of quantum mechanics and was specifically documented in PEAR's retrocognitive trials.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Local Entropy: Environmental Coupling</h3></div>
+        <p>Local entropy mode uses the device's cryptographic random number generator, seeded from hardware entropy: CPU timing jitter, thermal noise from silicon, micro-fluctuations from sensors, network timing events, and touch input. The entropy pool is sourced in part from the same physical environment you are measuring with your other sensors. If your intention is producing measurable changes in the physical environment — subtle changes in movement, electromagnetic field, or device thermal state — those changes could propagate into the entropy pool and produce deviations in the local entropy stream.</p>
+        <p>A local entropy deviation that coincides with a magnetometer deviation and a WiFi RSSI fluctuation is not three independent events pointing at the same cause. It may be one physical effect appearing across three measurement channels simultaneously — which is both more explicable than quantum effects and potentially more meaningful as evidence of environmental coupling.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Stochastic Resonance and Why Noise Matters</h3></div>
+        <p>There is a counterintuitive phenomenon in physics called stochastic resonance: the addition of noise to a system can actually improve its ability to detect weak signals. This has been documented in neuroscience, ecology, and electronic signal processing. If consciousness produces an extremely weak ordering effect on physical systems — too weak to detect reliably in any single measurement — then a system that couples many physical noise sources together might amplify that weak signal. Local entropy, by harvesting noise from many physical subsystems simultaneously, is precisely such a coupled system.</p>
+      </div>
+      <div class="disclaimer">The research referenced here is presented for educational purposes. This app does not make therapeutic, diagnostic, or scientific claims.</div>
+      <div class="article-nav">
+        <div class="article-nav-btn" data-goto="quantum"><div class="nav-btn-label">← Previous</div><div class="nav-btn-title">Quantum Interpretations</div></div>
+        <div class="article-nav-btn next" data-goto="consciousness"><div class="nav-btn-label">Next →</div><div class="nav-btn-title">The Science of Consciousness</div></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE 6: CONSCIOUSNESS -->
+    <div class="article-panel" id="panel-consciousness">
+      <div class="article-hero" style="background:rgba(224,64,251,0.03);border-color:rgba(224,64,251,0.12)">
+        <div class="hero-tag" style="color:rgba(224,64,251,0.7)">Consciousness</div>
+        <h1 class="hero-title">The Science of Consciousness</h1>
+        <p class="hero-sub">What we know, what we don't, and why it matters</p>
+        <div class="hero-meta">13 min read &nbsp;·&nbsp; Philosophy of Mind · Neuroscience</div>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--violet)"></div><h3>The Hard Problem</h3></div>
+        <p>In 1995, philosopher David Chalmers drew a distinction that has framed the field ever since. The "easy problems" of consciousness — explaining how the brain processes information, integrates sensory data, controls behaviour, reports on its own states — are tractable scientific questions. The "hard problem" is different: why is there subjective experience at all? Why does information processing feel like something? No explanation of neural mechanisms, however complete, seems to close this gap.</p>
+        <p>If we do not understand what consciousness fundamentally is, we are in no position to rule out that it has physical effects we have not yet accounted for.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--violet)"></div><h3>Integrated Information Theory</h3></div>
+        <p>One of the most mathematically developed theories of consciousness is Integrated Information Theory (IIT), proposed by neuroscientist Giulio Tononi. IIT defines consciousness in terms of phi (Φ) — a measure of how much information is generated by a system as a whole, above and beyond the information generated by its parts independently. Crucially, IIT predicts that consciousness is a fundamental property of information-integrating systems — not something that requires biology specifically, and not an epiphenomenon.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--violet)"></div><h3>Orchestrated Objective Reduction</h3></div>
+        <p>Physicist Roger Penrose and anaesthesiologist Stuart Hameroff proposed the Orchestrated Objective Reduction (Orch-OR) theory, arguing that consciousness arises from quantum computations in microtubules inside neurons. Each quantum collapse event corresponds to a moment of conscious experience. The warm, wet environment of neurons is generally considered too noisy for quantum coherence — though recent findings on quantum coherence in photosynthesis and bird navigation suggest this objection may be weaker than assumed.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--violet)"></div><h3>Global Workspace Theory</h3></div>
+        <p>Global Workspace Theory (GWT), developed by Bernard Baars and formalised computationally by Stanislas Dehaene, proposes that consciousness arises when information is "broadcast" widely across the brain via a global workspace. GWT has substantial empirical support from neuroimaging and clinical studies. It does not leave obvious room for mind-matter interaction effects — it simply does not accommodate them. This is the tension at the centre of this research area: the most empirically supported theories of consciousness do not explain the most intriguing anomalous data.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--violet)"></div><h3>Panpsychism and Broader Frameworks</h3></div>
+        <p>A minority but growing position in philosophy of mind is panpsychism — the view that some form of experience or proto-experience is a fundamental feature of reality, present at all levels of organisation. Philosophers including David Chalmers, Galen Strawson, and Philip Goff have argued for versions of this position as the most coherent solution to the hard problem. If mind is a fundamental aspect of information and matter, the sharp boundary between "inner" conscious states and "outer" physical systems becomes less clear.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--violet)"></div><h3>Where This Leaves the Research</h3></div>
+        <p>No theory of consciousness currently offers a satisfying mechanistic account of how intention might influence a random number generator. This is the honest state of the field. What the science does establish: consciousness is not understood. Its relationship to physical processes is not understood. The hard problem has not been solved. The most mathematically rigorous theory (IIT) implies that consciousness is a fundamental physical property. The most experimentally confirmed quantum theory contains an unresolved measurement problem. And a substantial empirical database from PEAR, the GCP, and related research documents small but persistent anomalous effects. The Advanced Lab gives you instruments to ask these questions personally, with your own data.</p>
+      </div>
+      <div class="disclaimer">The research referenced here is presented for educational purposes. This app does not make therapeutic, diagnostic, or scientific claims.</div>
+      <div class="article-nav">
+        <div class="article-nav-btn" data-goto="rng"><div class="nav-btn-label">← Previous</div><div class="nav-btn-title">The RNG Hypothesis</div></div>
+        <div class="article-nav-btn next" data-goto="protocol"><div class="nav-btn-label">Next →</div><div class="nav-btn-title">Running a Good Session</div></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE 7: PROTOCOL -->
+    <div class="article-panel" id="panel-protocol">
+      <div class="article-hero" style="background:rgba(0,229,176,0.03);border-color:rgba(0,229,176,0.12)">
+        <div class="hero-tag" style="color:rgba(0,229,176,0.7)">Practice</div>
+        <h1 class="hero-title">Running a Good Session</h1>
+        <p class="hero-sub">Environment, intention, and experimental discipline</p>
+        <div class="hero-meta">10 min read &nbsp;·&nbsp; Experimental Protocol</div>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>Why Protocol Matters</h3></div>
+        <p>The quality of your data is determined almost entirely by the consistency and care of your experimental protocol. The PEAR lab's most important methodological contribution was not its statistical analysis — it was its rigorous standardisation of experimental conditions across 26 years and 340 operators. That consistency is what allowed meaningful patterns to emerge from the noise. Consumer devices introduce noise sources that laboratory equipment does not: electromagnetic interference, accelerometer coupling, varying thermal states, battery fluctuations, network instability. You cannot eliminate these, but you can minimise them through protocol.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>Environment: Magnetic Stability</h3></div>
+        <p>Choose a location away from speakers and headphones (the magnets in transducers are strong enough to measurably deflect a phone magnetometer from a metre away); computers and monitors; microwaves and induction cooktops; large metal furniture that shifts position; vehicles passing very close. Before beginning, hold the device still for 30 seconds. If the magnetometer reading is drifting continuously rather than holding approximately steady, move away from the source of that drift.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>Environment: Acoustic and RF Stability</h3></div>
+        <p>A session conducted in a room with consistent background ambient sound is preferable to one with unpredictable acoustic events. Your baseline phase calibrates to the ambient acoustic level; abrupt changes during the experiment phase register as deviations. WiFi and Bluetooth RSSI measurements are sensitive to other devices connecting or disconnecting. For RF channel integrity, conduct sessions in a location where the number and distance of active wireless devices is approximately constant.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>Physical Stillness</h3></div>
+        <p>Seated comfortably with the device resting on a flat surface in front of you is the standard posture. The device should not be held in your hands during recording — hand tremor, grip pressure variation, and body heat transfer from palms to device all introduce noise. If you observe that your high-stillness sessions consistently produce different z-score distributions from your low-stillness sessions, that itself is interpretable data.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>Intention: Framing the Mental Posture</h3></div>
+        <p>The PEAR lab documented a consistent finding: operators who produced the strongest effects typically described their mental state not as effortful will or forceful pushing, but as a kind of relaxed resonance with the device — a feeling of being in rapport with the system rather than commanding it. Articulate your intention clearly in the pre-session note before starting. Once the session begins, do not monitor the real-time RNG output obsessively — this tends to produce feedback loops that disrupt stable intention.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>Session Duration and Statistical Power</h3></div>
+        <p>Longer sessions generate more RNG samples, increasing statistical power. The relationship follows square-root scaling: doubling your session duration increases sensitivity by approximately 1.41. A 10-minute session generates enough samples for a z-score with reasonable sensitivity to PEAR-range effects. Sessions shorter than 8 minutes produce z-scores with wide confidence intervals. For most purposes, 15–25 minutes is the practical optimum: long enough for meaningful statistics, short enough to maintain focused intention throughout.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--teal)"></div><h3>Control Sessions and Baseline Comparison</h3></div>
+        <p>The most rigorous personal experimental design includes control sessions: sessions run under identical environmental conditions, same duration, same device placement — but with a deliberate absence of intention. If your intention sessions consistently produce higher z-scores than your control sessions across a matched set, that is a within-person controlled comparison. Use the session intention field consistently ("no intention" vs your specific intention phrase) to enable this comparison in your own vault records.</p>
+      </div>
+      <div class="disclaimer">The research referenced here is presented for educational purposes. This app does not make therapeutic, diagnostic, or scientific claims.</div>
+      <div class="article-nav">
+        <div class="article-nav-btn" data-goto="consciousness"><div class="nav-btn-label">← Previous</div><div class="nav-btn-title">The Science of Consciousness</div></div>
+        <div class="article-nav-btn next" data-goto="null"><div class="nav-btn-label">Next →</div><div class="nav-btn-title">The Value of Null Results</div></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE 8: NULL RESULTS -->
+    <div class="article-panel" id="panel-null">
+      <div class="article-hero" style="background:rgba(123,140,222,0.03);border-color:rgba(123,140,222,0.12)">
+        <div class="hero-tag" style="color:rgba(123,140,222,0.7)">Epistemology</div>
+        <h1 class="hero-title">The Value of Null Results</h1>
+        <p class="hero-sub">Why finding nothing is finding something</p>
+        <div class="hero-meta">8 min read &nbsp;·&nbsp; Statistics · Scientific Method</div>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--indigo)"></div><h3>The Most Undervalued Outcome in Science</h3></div>
+        <p>A null result is a session in which your RNG output stays close to theoretical chance — z-scores hovering near zero, no consistent directional bias. In everyday language, "nothing happened." In scientific language, a null result is a result. It is data. It carries exactly as much information as a positive result — sometimes more.</p>
+        <p>The historical record of parapsychology research has been severely distorted by the file drawer problem: positive results get submitted for publication; null results sit unpublished. This creates a systematic bias toward positive findings. In your own longitudinal data, the equivalent bias would be if you unconsciously gave more weight to sessions with striking z-scores and dismissed sessions where nothing unusual appeared. This is a natural cognitive tendency — it is also the most direct route to fooling yourself.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--indigo)"></div><h3>What a Null Result Actually Tells You</h3></div>
+        <p>A consistent pattern of null results contains several possible interpretations: the effect does not exist for you (PEAR documented strong individual variation — some operators showed nothing across many trials); the effect exists but your current protocol is not sensitive to it; the effect is real but inconsistent (many biological phenomena show intra-individual variability); or the effect does not exist in the way the hypothesis frames it. A sustained series of well-conducted sessions with consistently null results is evidence against the strong version of the hypothesis.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--indigo)"></div><h3>The Replication Standard</h3></div>
+        <p>Modern science has grappled seriously with replication since the 2010s replication crisis, in which a systematic attempt to replicate 100 published psychology studies found fewer than 40% reproduced their original findings. The standard that emerged: findings should be pre-registered, conducted with adequate statistical power, and independently replicated. For your personal data, the replication standard translates to: do not interpret a single striking session as confirmation. Build toward a personal dataset large enough that the pattern, if real, emerges reliably.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--indigo)"></div><h3>Bayes, Not Binary</h3></div>
+        <p>The conventional p-value framework is frequently misunderstood. A p-value below 0.05 does not mean there is a 95% probability that the effect is real. It means that if pure chance were operating, you would observe a result this extreme about 5% of the time. Bayesian reasoning is more coherent for personal longitudinal data: given your prior belief about the probability of this effect, and given this new data, what should your updated belief be? Each session shifts your probability estimate. Accumulate evidence across many sessions, weight null results equally with positive results, and let your interpretation evolve as the data warrants.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--indigo)"></div><h3>The Pragmatics of Sitting With Uncertainty</h3></div>
+        <p>Running experiments with genuinely uncertain outcomes over an extended period requires cultivating comfort with ambiguity and active resistance to premature interpretation. The researchers at PEAR who produced the most scientifically credible work were those who maintained this posture across decades — accumulating data without narrativising prematurely, publishing null results alongside positive ones, and describing findings in terms of statistical tendencies rather than dramatic claims. A null result honestly recorded is more scientifically valuable than a striking result dishonestly framed.</p>
+      </div>
+      <div class="disclaimer">The research referenced here is presented for educational purposes. This app does not make therapeutic, diagnostic, or scientific claims.</div>
+      <div class="article-nav">
+        <div class="article-nav-btn" data-goto="protocol"><div class="nav-btn-label">← Previous</div><div class="nav-btn-title">Running a Good Session</div></div>
+        <div class="article-nav-btn next" data-goto="glossary"><div class="nav-btn-label">Next →</div><div class="nav-btn-title">Glossary of Key Terms</div></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE 9: GLOSSARY -->
+    <div class="article-panel" id="panel-glossary">
+      <div class="article-hero" style="background:rgba(255,107,107,0.03);border-color:rgba(255,107,107,0.12)">
+        <div class="hero-tag" style="color:rgba(255,107,107,0.7)">Reference</div>
+        <h1 class="hero-title">Glossary of Key Terms</h1>
+        <p class="hero-sub">Precise definitions for concepts used throughout</p>
+        <div class="hero-meta">12 min read &nbsp;·&nbsp; Reference</div>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Z-Score</h3></div>
+        <p>A z-score expresses how far a given observation sits from the mean of a distribution, measured in standard deviations. For RNG data: z = (observed ones − n/2) / (√n / 2), where n is the total number of RNG ticks in the session. Under pure chance, approximately 68% of sessions produce a z-score between −1 and +1; 95% between −2 and +2; 99.7% between −3 and +3. A z-score of ±1.96 corresponds to p = 0.05. The z-score is sample-size-dependent — the same observed deviation percentage produces a larger z-score in a long session than a short one.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Entropy and the Entropy Pool</h3></div>
+        <p>In information theory, entropy (Shannon entropy) measures the average unpredictability in a source of data. In computing, an entropy pool is a buffer maintained by the operating system that accumulates unpredictable bits from physical hardware events: the precise timing of touchscreen events, interrupt latencies from hardware components, thermal noise sampled from CPU and sensor circuits, and network packet arrival timing. The entropy pool is continuously replenished as events occur. This app's local entropy mode draws from this pool — and because the pool is seeded from physical sensors, its content is not strictly independent of the device's physical environment.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Quantum Random Number Generator (QRNG)</h3></div>
+        <p>A QRNG produces random numbers from a fundamentally quantum physical process — one where the outcome is genuinely undetermined prior to measurement, not merely practically unpredictable. The Cisco Outshift QRNG service used by this app measures vacuum fluctuations — the irreducible quantum noise present in the electromagnetic field, a direct physical consequence of the Heisenberg uncertainty principle. The key property distinguishing a QRNG: the quantum output is statistically independent of anything occurring on or near your device.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Wavefunction and Wavefunction Collapse</h3></div>
+        <p>A wavefunction (ψ) is a complex-valued function encoding the complete quantum state of a system. Before measurement, a quantum system in a superposition state does not have a definite value for the measured quantity — the wavefunction represents the coexistence of multiple possibilities simultaneously, not merely uncertainty about a pre-existing definite value. Wavefunction collapse refers to the apparent transition from superposition to a single definite outcome upon measurement. What physically causes this collapse remains the measurement problem — unresolved in the foundations of physics.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Retrocausality</h3></div>
+        <p>Retrocausality refers to the influence of a later event on an earlier one — causation running backward in time. This temporal asymmetry is not a fundamental law of physics — it is a statistical consequence of thermodynamics. At the level of individual particle interactions, the fundamental laws of physics are time-symmetric: they work equally well in both temporal directions. The transactional interpretation is built around retrocausality. The delayed-choice experiment demonstrates that future measurement decisions appear to influence the past behaviour of photons. These are confirmed, textbook quantum phenomena.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Coherence (HRV and Session)</h3></div>
+        <p>HRV coherence (HeartMath) refers to a specific pattern in heart rate variability in which beat-to-beat intervals oscillate smoothly at around 0.1 Hz. High HRV coherence is associated with parasympathetic dominance, reduced stress hormones, and improved prefrontal function. It can be induced through slow breathing at approximately 5–6 breaths per minute. Session coherence score (this app) is a separate composite metric measuring experimental condition quality: physical stillness, environmental magnetic stability, RNG source quality, and sensor availability. A high session coherence score indicates the data from that session can be more reliably interpreted.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Statistical Significance and p-Value</h3></div>
+        <p>A p-value is the probability of observing a result at least as extreme as the one obtained, assuming the null hypothesis is true. A p-value is not the probability that the null hypothesis is true, nor the probability that the effect is real. These are common misinterpretations. A trivially small effect can achieve p &lt; 0.001 with a large enough sample. Conversely, a genuine large effect can fail to reach p &lt; 0.05 in a small sample, not because the effect is absent but because the data is insufficient. For personal longitudinal data, the pattern of z-scores over time is more informative than whether any single session crosses a threshold.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Decoherence</h3></div>
+        <p>Quantum decoherence is the process by which quantum superpositions are destroyed through interaction with the environment. When a quantum system interacts with a large number of environmental degrees of freedom, information about its quantum phase relationships leaks into the environment. The system appears to behave classically. Decoherence is fast for macroscopic objects, but recent observations of quantum coherence in photosynthetic light harvesting, avian magnetic navigation, and enzyme catalysis suggest that biological systems may have mechanisms for maintaining coherence that are not yet fully understood.</p>
+      </div>
+      <div class="section">
+        <div class="section-heading"><div class="section-bar" style="background:var(--red)"></div><h3>Effect Size</h3></div>
+        <p>Effect size is a quantitative measure of the magnitude of a phenomenon, independent of sample size. The PEAR laboratory documented a mean effect size of approximately 0.0003 — a shift of 0.03% from the theoretical mean. This is extraordinarily small: it required millions of trials accumulated over 26 years to achieve statistical significance. No single session of any practical duration will reliably detect an effect that small. If mind-matter interaction effects exist at the scale documented by PEAR, they are inherently a longitudinal, aggregate phenomenon. This is why the Vault and trend analysis exist in this app.</p>
+      </div>
+      <div class="disclaimer">The research referenced here is presented for educational purposes. This app does not make therapeutic, diagnostic, or scientific claims. All findings cited are from published or publicly available sources and should be evaluated critically.</div>
+      <div class="article-nav">
+        <div class="article-nav-btn" data-goto="null"><div class="nav-btn-label">← Previous</div><div class="nav-btn-title">The Value of Null Results</div></div>
+        <div class="article-nav-btn next" data-goto="hub"><div class="nav-btn-label">↑ Back to</div><div class="nav-btn-title">Reading Room</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const ARTICLES = ['hub','pear','observer','heart','quantum','rng','consciousness','protocol','null','glossary'];
+
+function show(id) {
+  // panels
+  document.querySelectorAll('.article-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-' + id);
+  if (panel) { panel.classList.add('active'); window.scrollTo(0,0); }
+
+  // sidebar tabs
+  document.querySelectorAll('.article-tab').forEach(t => t.classList.remove('active'));
+  const tab = document.querySelector('[data-id="' + id + '"]');
+  if (tab) {
+    tab.classList.add('active');
+    // colour the left border
+    const color = tab.querySelector('.tab-tag')?.style.color || 'rgba(0,229,176,0.5)';
+    tab.style.borderLeftColor = color;
+    // reset others
+    document.querySelectorAll('.article-tab:not(.active)').forEach(t => t.style.borderLeftColor = 'transparent');
+  }
+
+  // URL hash
+  history.replaceState(null, '', '#' + id);
+
+  // update page title
+  const titleEl = tab?.querySelector('.tab-title');
+  if (titleEl) document.title = titleEl.textContent + ' — Mind Influence Lab Reading Room';
+  else document.title = 'Reading Room — Mind Influence Lab';
+}
+
+// wire up sidebar tabs
+document.querySelectorAll('.article-tab').forEach(tab => {
+  tab.addEventListener('click', () => show(tab.dataset.id));
+});
+
+// wire up article cards on hub
+document.querySelectorAll('[data-goto]').forEach(el => {
+  el.addEventListener('click', () => show(el.dataset.goto));
+});
+
+// handle initial hash
+const hash = window.location.hash.replace('#','');
+if (hash && ARTICLES.includes(hash)) show(hash);
+else show('hub');
+</script>
+</body>
+</html>
