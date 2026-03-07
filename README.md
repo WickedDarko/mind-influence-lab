@@ -101,8 +101,9 @@ This app is for educational and exploratory purposes only. It is not a medical, 
 
 ## License
 
-See [LICENSE](licence.txt) for details.
+See [LICENSE](LICENCE.txt) for details.
 
 ---
 
 *Built with Flutter · Free · Offline-first · No tracking · v2.0.0*
+
