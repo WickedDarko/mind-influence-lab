@@ -101,7 +101,7 @@ This app is for educational and exploratory purposes only. It is not a medical, 
 
 ## License
 
-See [LICENSE](LICENSE) for details.
+See [LICENSE](licence.txt) for details.
 
 ---
 
