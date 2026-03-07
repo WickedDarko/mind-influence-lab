@@ -552,6 +552,10 @@
       position: relative;
       overflow: hidden;
       transition: background 0.25s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
     }
 
     .reading-card:hover { background: rgba(255,255,255,0.05); }
@@ -778,7 +782,10 @@
   <!-- NAV -->
   <nav>
     <span class="nav-wordmark">Mind Influence Lab</span>
-    <span class="nav-badge">Android Beta</span>
+    <div style="display:flex;align-items:center;gap:14px">
+      <a href="./reading-room/" style="font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:400;font-style:italic;color:rgba(255,255,255,0.45);letter-spacing:0.3px;text-decoration:none;border-bottom:1px solid rgba(0,229,176,0.3);padding-bottom:1px;transition:color 0.2s,border-color 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.8)';this.style.borderColor='rgba(0,229,176,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.45)';this.style.borderColor='rgba(0,229,176,0.3)'">Reading Room</a>
+      <span class="nav-badge">Android Beta</span>
+    </div>
   </nav>
 
   <!-- HERO -->
@@ -960,60 +967,60 @@
       <p class="section-body">Nine in-app articles covering the research, the physics, and the epistemology — so you understand exactly what you are measuring and what it might mean.</p>
 
       <div class="reading-grid" style="margin-top:48px">
-        <div class="reading-card">
+        <a class="reading-card" href="./reading-room/#pear">
           <div class="reading-accent-bar" style="background:var(--teal)"></div>
           <div class="reading-tag" style="color:var(--teal)">Foundation</div>
           <div class="reading-title">The Princeton RNG Experiments</div>
           <p class="reading-desc">26 years, 340 operators, 2.5 million trials. What PEAR actually found — including the retrocognitive trials.</p>
-        </div>
-        <div class="reading-card">
+        </a>
+        <a class="reading-card" href="./reading-room/#observer">
           <div class="reading-accent-bar" style="background:#00B8D4"></div>
           <div class="reading-tag" style="color:#00B8D4">Theory</div>
           <div class="reading-title">The Observer Effect</div>
           <p class="reading-desc">Wavefunction collapse, the measurement problem, and the serious scientific debate about consciousness in quantum mechanics.</p>
-        </div>
-        <div class="reading-card">
+        </a>
+        <a class="reading-card" href="./reading-room/#heart">
           <div class="reading-accent-bar" style="background:var(--purple)"></div>
           <div class="reading-tag" style="color:var(--purple)">Evidence</div>
           <div class="reading-title">Heart Fields & Coherence</div>
           <p class="reading-desc">HeartMath research, bioelectromagnetics, and what the heart's electromagnetic field actually means physically.</p>
-        </div>
-        <div class="reading-card">
+        </a>
+        <a class="reading-card" href="./reading-room/#quantum">
           <div class="reading-accent-bar" style="background:var(--amber)"></div>
           <div class="reading-tag" style="color:var(--amber)">Physics</div>
           <div class="reading-title">Quantum Interpretations</div>
           <p class="reading-desc">Copenhagen, Many Worlds, Transactional — and why the choice between them matters for this experiment.</p>
-        </div>
-        <div class="reading-card">
+        </a>
+        <a class="reading-card" href="./reading-room/#rng">
           <div class="reading-accent-bar" style="background:var(--red)"></div>
           <div class="reading-tag" style="color:var(--red)">Method</div>
           <div class="reading-title">The RNG Hypothesis</div>
           <p class="reading-desc">Three protocols, three experimental questions. Why local entropy and quantum RNG test fundamentally different things.</p>
-        </div>
-        <div class="reading-card">
+        </a>
+        <a class="reading-card" href="./reading-room/#consciousness">
           <div class="reading-accent-bar" style="background:#E040FB"></div>
           <div class="reading-tag" style="color:#E040FB">Consciousness</div>
           <div class="reading-title">The Science of Consciousness</div>
           <p class="reading-desc">The hard problem, IIT, Orch-OR, Global Workspace Theory — and where they leave the research.</p>
-        </div>
-        <div class="reading-card">
+        </a>
+        <a class="reading-card" href="./reading-room/#protocol">
           <div class="reading-accent-bar" style="background:var(--amber)"></div>
           <div class="reading-tag" style="color:var(--amber)">Interpretation</div>
           <div class="reading-title">Reading Your Results</div>
           <p class="reading-desc">What z-scores, phase analysis, coherence scores, and multi-channel convergence actually mean statistically.</p>
-        </div>
-        <div class="reading-card">
+        </a>
+        <a class="reading-card" href="./reading-room/#protocol">
           <div class="reading-accent-bar" style="background:var(--teal)"></div>
           <div class="reading-tag" style="color:var(--teal)">Practice</div>
           <div class="reading-title">Running a Good Session</div>
           <p class="reading-desc">Environment, intention framing, duration, and control sessions — the protocol decisions that determine data quality.</p>
-        </div>
-        <div class="reading-card">
+        </a>
+        <a class="reading-card" href="./reading-room/#null">
           <div class="reading-accent-bar" style="background:var(--blue)"></div>
           <div class="reading-tag" style="color:var(--blue)">Epistemology</div>
           <div class="reading-title">The Value of Null Results</div>
           <p class="reading-desc">Why finding nothing is finding something. The file drawer problem, Bayesian reasoning, and sitting with uncertainty.</p>
-        </div>
+        </a>
       </div>
     </div>
   </section>
