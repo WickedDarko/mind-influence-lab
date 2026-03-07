@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mind Influence Lab — Personal Consciousness Research Instrument</title>
+  <meta name="description" content="A scientifically grounded Android app for exploring the relationship between focused intention and measurable physical reality. Quantum RNG, multi-sensor recording, and longitudinal analysis inspired by the Princeton PEAR Lab." />
+  <meta property="og:title" content="Mind Influence Lab" />
+  <meta property="og:description" content="A personal research instrument for quantum RNG consciousness experiments. Grounded in PEAR Lab methodology. Free, offline, no tracking." />
+  <meta name="theme-color" content="#030308" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #030308;
+      --bg2:       #07070f;
+      --red:       #FF6B6B;
+      --teal:      #00E5B0;
+      --amber:     #FF9F43;
+      --purple:    #B48CFF;
+      --blue:      #7B8CDE;
+      --white:     #FFFFFF;
+      --dim:       rgba(255,255,255,0.45);
+      --faint:     rgba(255,255,255,0.18);
+      --ghost:     rgba(255,255,255,0.06);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── NOISE GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.6;
+    }
+
+    /* ── CANVAS BACKGROUND ── */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── LAYOUT ── */
+    .page { position: relative; z-index: 1; }
+
+    section { width: 100%; }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(3,3,8,0.95), transparent);
+      backdrop-filter: blur(4px);
+    }
+
+    .nav-wordmark {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--faint);
+      text-transform: uppercase;
+    }
+
+    .nav-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: var(--teal);
+      border: 1px solid rgba(0,229,176,0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 32px 80px;
+      position: relative;
+    }
+
+    .hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--red);
+      opacity: 0.7;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeUp 1s ease both;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--red);
+      opacity: 0.5;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(52px, 9vw, 96px);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: -1px;
+      margin-bottom: 32px;
+      animation: fadeUp 1s ease 0.1s both;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: rgba(255,107,107,0.85);
+    }
+
+    .hero-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(14px, 2vw, 16px);
+      font-weight: 300;
+      color: var(--dim);
+      line-height: 1.8;
+      max-width: 560px;
+      margin-bottom: 52px;
+      animation: fadeUp 1s ease 0.2s both;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      animation: fadeUp 1s ease 0.3s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--red);
+      color: var(--bg);
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: #ff8585;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 32px rgba(255,107,107,0.3);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--faint);
+      color: var(--dim);
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 24px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* hero ambient glow */
+    .hero-glow {
+      position: absolute;
+      top: 20%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,107,107,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      animation: pulse 6s ease-in-out infinite;
+    }
+
+    .hero-glow-2 {
+      position: absolute;
+      bottom: 10%;
+      left: -5%;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,176,0.03) 0%, transparent 70%);
+      pointer-events: none;
+      animation: pulse 8s ease-in-out 2s infinite;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      border-top: 1px solid var(--ghost);
+      border-bottom: 1px solid var(--ghost);
+      padding: 28px 0;
+    }
+
+    .stats-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 2px;
+      color: var(--faint);
+      text-transform: uppercase;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 3px;
+      color: var(--faint);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-tag::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--ghost);
+      max-width: 80px;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+    }
+
+    .section-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--dim);
+      line-height: 1.9;
+      max-width: 600px;
+    }
+
+    /* ── HYPOTHESIS ── */
+    .hypothesis {
+      padding: 100px 0;
+    }
+
+    .hypothesis-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 56px;
+    }
+
+    .hyp-card {
+      background: var(--ghost);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .hyp-card:hover { background: rgba(255,255,255,0.05); }
+
+    .hyp-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 2px;
+      height: 100%;
+    }
+
+    .hyp-card.c-red::before   { background: var(--red); opacity: 0.6; }
+    .hyp-card.c-teal::before  { background: var(--teal); opacity: 0.6; }
+    .hyp-card.c-amber::before { background: var(--amber); opacity: 0.6; }
+    .hyp-card.c-purple::before{ background: var(--purple); opacity: 0.6; }
+
+    .hyp-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      line-height: 1;
+      opacity: 0.08;
+      margin-bottom: 16px;
+    }
+
+    .hyp-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: rgba(255,255,255,0.88);
+    }
+
+    .hyp-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--faint);
+      line-height: 1.8;
+    }
+
+    /* ── CHANNELS / SENSORS ── */
+    .channels {
+      padding: 100px 0;
+      background: linear-gradient(to bottom, transparent, rgba(255,107,107,0.015), transparent);
+    }
+
+    .channel-list {
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .channel-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      gap: 0;
+      border-bottom: 1px solid var(--ghost);
+      padding: 22px 0;
+      align-items: start;
+      transition: background 0.2s;
+    }
+
+    .channel-row:first-child { border-top: 1px solid var(--ghost); }
+    .channel-row:hover { background: var(--ghost); padding-left: 12px; padding-right: 12px; margin: 0 -12px; }
+
+    .channel-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 2px;
+      padding: 4px 8px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    .channel-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 5px;
+    }
+
+    .channel-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--faint);
+      line-height: 1.7;
+    }
+
+    .channel-meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: var(--faint);
+      text-align: right;
+      line-height: 1.8;
+      padding-top: 2px;
+    }
+
+    /* ── QRNG CALLOUT ── */
+    .qrng-callout {
+      margin: 56px 0 0;
+      padding: 36px 40px;
+      border: 1px solid rgba(255,107,107,0.2);
+      background: rgba(255,107,107,0.04);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .qrng-callout::after {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,107,107,0.06), transparent 70%);
+      pointer-events: none;
+    }
+
+    .qrng-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 3px;
+      color: rgba(255,107,107,0.6);
+      margin-bottom: 14px;
+    }
+
+    .qrng-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+
+    .qrng-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--dim);
+      line-height: 1.8;
+      max-width: 640px;
+    }
+
+    /* ── METHODOLOGY ── */
+    .methodology {
+      padding: 100px 0;
+    }
+
+    .method-steps {
+      margin-top: 56px;
+      counter-reset: steps;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .method-step {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 24px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--ghost);
+      counter-increment: steps;
+    }
+
+    .method-step:first-child { border-top: 1px solid var(--ghost); }
+
+    .step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.08);
+      line-height: 1;
+      padding-top: 2px;
+    }
+
+    .step-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: 8px;
+    }
+
+    .step-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--faint);
+      line-height: 1.8;
+    }
+
+    /* ── READING ROOM ── */
+    .reading-room {
+      padding: 100px 0;
+      background: linear-gradient(to bottom, transparent, rgba(0,229,176,0.012), transparent);
+    }
+
+    .reading-grid {
+      margin-top: 56px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .reading-card {
+      background: var(--ghost);
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s;
+    }
+
+    .reading-card:hover { background: rgba(255,255,255,0.05); }
+
+    .reading-accent-bar {
+      width: 100%;
+      height: 2px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .reading-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 7px;
+      letter-spacing: 2.5px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .reading-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .reading-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--faint);
+      line-height: 1.7;
+    }
+
+    /* ── PRIVACY ── */
+    .privacy {
+      padding: 100px 0;
+    }
+
+    .privacy-grid {
+      margin-top: 56px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+    }
+
+    .privacy-item {
+      padding: 28px;
+      background: var(--ghost);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .privacy-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .privacy-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 5px;
+    }
+
+    .privacy-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--faint);
+      line-height: 1.7;
+    }
+
+    /* ── FOOTER CTA ── */
+    .footer-cta {
+      padding: 120px 0 80px;
+      text-align: center;
+      position: relative;
+    }
+
+    .footer-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      height: 300px;
+      background: radial-gradient(ellipse, rgba(255,107,107,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .footer-cta-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 3px;
+      color: var(--faint);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+
+    .footer-cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 6vw, 68px);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-bottom: 24px;
+      letter-spacing: -0.5px;
+    }
+
+    .footer-cta-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--dim);
+      max-width: 480px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--ghost);
+      padding: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      color: var(--faint);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--dim); }
+
+    .footer-copy {
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.12);
+    }
+
+    /* ── DISCLAIMER ── */
+    .disclaimer {
+      padding: 0 32px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .disclaimer p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.18);
+      line-height: 1.8;
+      border-top: 1px solid var(--ghost);
+      padding-top: 24px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.05); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 680px) {
+      .hypothesis-grid,
+      .privacy-grid { grid-template-columns: 1fr; }
+
+      .reading-grid { grid-template-columns: 1fr; }
+
+      .channel-row { grid-template-columns: 64px 1fr; }
+      .channel-meta { display: none; }
+
+      .stats-inner { gap: 32px; }
+
+      nav { padding: 16px 20px; }
+      .container { padding: 0 20px; }
+      .hero { padding: 100px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-wordmark">Mind Influence Lab</span>
+    <span class="nav-badge">Android Beta</span>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-inner">
+      <div class="hero-tag">Personal Consciousness Research Instrument</div>
+      <h1 class="hero-title">
+        Can intention<br>
+        <em>bend chance?</em>
+      </h1>
+      <p class="hero-subtitle">
+        A scientifically grounded Android app for exploring the relationship between focused intention and measurable physical reality — using genuine quantum random numbers, multi-sensor recording, and longitudinal statistical analysis.
+      </p>
+      <div class="hero-cta-row">
+        <a href="https://github.com/wickeddarko/mind-influence-lab/releases" class="btn-primary">
+          ↓ Download APK
+        </a>
+        <a href="https://github.com/wickeddarko/mind-influence-lab" class="btn-secondary">
+          View on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- HYPOTHESIS -->
+  <section class="hypothesis">
+    <div class="container reveal">
+      <div class="section-tag">The Question</div>
+      <h2 class="section-title">The hypothesis<br>behind the experiment</h2>
+      <p class="section-body">Between 1979 and 2007, Princeton University's PEAR Lab ran one of the most rigorous scientific investigations into mind-matter interaction ever conducted. The results were small, persistent, and unexplained. This app lets you ask the same question — with your own data.</p>
+
+      <div class="hypothesis-grid" style="margin-top:56px">
+        <div class="hyp-card c-red">
+          <div class="hyp-number">01</div>
+          <div class="hyp-heading">Quantum Randomness</div>
+          <p class="hyp-text">Genuine quantum random bits, generated from vacuum fluctuations by Cisco Outshift's QRNG server. Physically independent of your device — no sensor crosstalk, no classical noise coupling.</p>
+        </div>
+        <div class="hyp-card c-teal">
+          <div class="hyp-number">02</div>
+          <div class="hyp-heading">Statistical Deviation</div>
+          <p class="hyp-text">Z-scores computed from the binomial distribution against the theoretical 50/50 baseline. Phase analysis isolates early, mid, and late intention independently — the same approach as PEAR.</p>
+        </div>
+        <div class="hyp-card c-amber">
+          <div class="hyp-number">03</div>
+          <div class="hyp-heading">Multi-Channel Convergence</div>
+          <p class="hyp-text">Six independent physical channels recorded simultaneously. When quantum RNG and the magnetometer deviate in the same five-second window, that convergence is harder to attribute to noise than either channel alone.</p>
+        </div>
+        <div class="hyp-card c-purple">
+          <div class="hyp-number">04</div>
+          <div class="hyp-heading">Longitudinal Patterns</div>
+          <p class="hyp-text">Single sessions are statistically inconclusive by design. The effect documented by PEAR had an effect size of approximately 0.0003 — it required years of accumulated data to emerge. Your vault is where meaning lives.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHANNELS -->
+  <section class="channels">
+    <div class="container reveal">
+      <div class="section-tag">Measurement</div>
+      <h2 class="section-title">What gets<br>recorded</h2>
+      <p class="section-body">Every session records six independent channels simultaneously, each with its own noise architecture. The spatial heatmap in your results shows when multiple channels deviate in the same time window.</p>
+
+      <div class="channel-list" style="margin-top:48px">
+
+        <div class="channel-row">
+          <span class="channel-tag" style="background:rgba(255,107,107,0.1);color:#FF6B6B">QRNG</span>
+          <div>
+            <div class="channel-name">Quantum RNG</div>
+            <p class="channel-desc">Live or buffered quantum random bits from Cisco Outshift vacuum fluctuation measurements. The primary experimental channel — genuinely non-deterministic and physically isolated from your device.</p>
+          </div>
+          <div class="channel-meta">z-score<br>deviation %<br>phase analysis</div>
+        </div>
+
+        <div class="channel-row">
+          <span class="channel-tag" style="background:rgba(0,229,176,0.1);color:#00E5B0">MAG</span>
+          <div>
+            <div class="channel-name">Magnetometer</div>
+            <p class="channel-desc">Ambient magnetic field in microtesla (μT). The heart generates an electromagnetic field detectable several feet from the body. Baseline-referenced so environmental drift is accounted for.</p>
+          </div>
+          <div class="channel-meta">μT magnitude<br>deviation %<br>spike detection</div>
+        </div>
+
+        <div class="channel-row">
+          <span class="channel-tag" style="background:rgba(255,159,67,0.1);color:#FF9F43">SND</span>
+          <div>
+            <div class="channel-name">Ambient Sound</div>
+            <p class="channel-desc">Sound amplitude in decibels. No audio is recorded or stored — only the instantaneous dB value. Environmental acoustic stability is factored into session coherence scoring.</p>
+          </div>
+          <div class="channel-meta">dB level<br>session mean<br>deviation %</div>
+        </div>
+
+        <div class="channel-row">
+          <span class="channel-tag" style="background:rgba(0,184,212,0.1);color:#00B8D4">BAR</span>
+          <div>
+            <div class="channel-name">Barometer</div>
+            <p class="channel-desc">Atmospheric pressure in hectopascals (hPa). Provides a slow-changing environmental baseline. Convergent deviations with RNG in the same window are logged for review.</p>
+          </div>
+          <div class="channel-meta">hPa pressure<br>session mean<br>trend</div>
+        </div>
+
+        <div class="channel-row">
+          <span class="channel-tag" style="background:rgba(52,211,153,0.1);color:#34D399">WiFi</span>
+          <div>
+            <div class="channel-name">WiFi RSSI</div>
+            <p class="channel-desc">Signal strength of connected WiFi network. RF environment fluctuations — devices connecting, interference events — are tracked and available as a convergence channel in the heatmap.</p>
+          </div>
+          <div class="channel-meta">dBm RSSI<br>z-score<br>deviation</div>
+        </div>
+
+        <div class="channel-row">
+          <span class="channel-tag" style="background:rgba(180,140,255,0.1);color:#B48CFF">BT</span>
+          <div>
+            <div class="channel-name">Bluetooth</div>
+            <p class="channel-desc">RSSI variance across nearby Bluetooth devices. Variance spikes indicate RF environment shifts. Included as a passive environmental witness channel alongside WiFi.</p>
+          </div>
+          <div class="channel-meta">RSSI variance<br>device count<br>deviation</div>
+        </div>
+
+      </div>
+
+      <div class="qrng-callout reveal">
+        <div class="qrng-label">On Quantum Randomness</div>
+        <div class="qrng-title">Why quantum RNG matters for this experiment</div>
+        <p class="qrng-body">Consumer phones produce random numbers from their entropy pool — CPU timing, sensor jitter, touch events. These are classically random but not physically independent of the device. A quantum RNG sources from vacuum fluctuation measurements on dedicated optical hardware at a remote server. There is no physical coupling between that apparatus and your phone's sensors. If deviation appears in the quantum channel, it cannot be explained by hardware crosstalk — which is precisely why it is the scientifically preferred source for this research.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section class="methodology">
+    <div class="container reveal">
+      <div class="section-tag">Protocol</div>
+      <h2 class="section-title">How a session<br>works</h2>
+      <p class="section-body">The Advanced Lab follows a structured four-phase protocol derived from PEAR methodology. Each phase serves a specific statistical function.</p>
+
+      <div class="method-steps">
+        <div class="method-step">
+          <div class="step-num">01</div>
+          <div>
+            <div class="step-heading">Pre-Session Context</div>
+            <p class="step-body">Record your current intention, energy level, stress level, and mood. These are stored with each session and available for longitudinal correlation analysis in the vault — allowing you to identify conditions under which your results are consistently stronger or weaker.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="step-num">02</div>
+          <div>
+            <div class="step-heading">Baseline Phase</div>
+            <p class="step-body">All sensors record simultaneously before you apply any conscious intention. This establishes the environmental reference point for the session — magnetometer baseline, acoustic level, RF environment, and entropy pool state. Without an established baseline, deviation is unmeasurable.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="step-num">03</div>
+          <div>
+            <div class="step-heading">Experiment Phase — Three Periods</div>
+            <p class="step-body">The active experiment is divided into early, mid, and late periods. Each produces its own isolated z-score computed only from samples within that period — not cumulative from session start. This structure tests whether the effect sustains, builds, or declines across a session, mirroring the decline effect documented in PEAR data.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="step-num">04</div>
+          <div>
+            <div class="step-heading">Results & Longitudinal Vault</div>
+            <p class="step-body">Session results include z-score, deviation percentage, phase analysis, a spatial heatmap showing multi-channel convergence events, and a coherence score indicating session quality. All sessions are stored locally and accessible in the vault for pattern analysis across your personal dataset.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- READING ROOM -->
+  <section class="reading-room">
+    <div class="container reveal">
+      <div class="section-tag">Reading Room</div>
+      <h2 class="section-title">The science<br>behind the question</h2>
+      <p class="section-body">Nine in-app articles covering the research, the physics, and the epistemology — so you understand exactly what you are measuring and what it might mean.</p>
+
+      <div class="reading-grid" style="margin-top:48px">
+        <div class="reading-card">
+          <div class="reading-accent-bar" style="background:var(--teal)"></div>
+          <div class="reading-tag" style="color:var(--teal)">Foundation</div>
+          <div class="reading-title">The Princeton RNG Experiments</div>
+          <p class="reading-desc">26 years, 340 operators, 2.5 million trials. What PEAR actually found — including the retrocognitive trials.</p>
+        </div>
+        <div class="reading-card">
+          <div class="reading-accent-bar" style="background:#00B8D4"></div>
+          <div class="reading-tag" style="color:#00B8D4">Theory</div>
+          <div class="reading-title">The Observer Effect</div>
+          <p class="reading-desc">Wavefunction collapse, the measurement problem, and the serious scientific debate about consciousness in quantum mechanics.</p>
+        </div>
+        <div class="reading-card">
+          <div class="reading-accent-bar" style="background:var(--purple)"></div>
+          <div class="reading-tag" style="color:var(--purple)">Evidence</div>
+          <div class="reading-title">Heart Fields & Coherence</div>
+          <p class="reading-desc">HeartMath research, bioelectromagnetics, and what the heart's electromagnetic field actually means physically.</p>
+        </div>
+        <div class="reading-card">
+          <div class="reading-accent-bar" style="background:var(--amber)"></div>
+          <div class="reading-tag" style="color:var(--amber)">Physics</div>
+          <div class="reading-title">Quantum Interpretations</div>
+          <p class="reading-desc">Copenhagen, Many Worlds, Transactional — and why the choice between them matters for this experiment.</p>
+        </div>
+        <div class="reading-card">
+          <div class="reading-accent-bar" style="background:var(--red)"></div>
+          <div class="reading-tag" style="color:var(--red)">Method</div>
+          <div class="reading-title">The RNG Hypothesis</div>
+          <p class="reading-desc">Three protocols, three experimental questions. Why local entropy and quantum RNG test fundamentally different things.</p>
+        </div>
+        <div class="reading-card">
+          <div class="reading-accent-bar" style="background:#E040FB"></div>
+          <div class="reading-tag" style="color:#E040FB">Consciousness</div>
+          <div class="reading-title">The Science of Consciousness</div>
+          <p class="reading-desc">The hard problem, IIT, Orch-OR, Global Workspace Theory — and where they leave the research.</p>
+        </div>
+        <div class="reading-card">
+          <div class="reading-accent-bar" style="background:var(--amber)"></div>
+          <div class="reading-tag" style="color:var(--amber)">Interpretation</div>
+          <div class="reading-title">Reading Your Results</div>
+          <p class="reading-desc">What z-scores, phase analysis, coherence scores, and multi-channel convergence actually mean statistically.</p>
+        </div>
+        <div class="reading-card">
+          <div class="reading-accent-bar" style="background:var(--teal)"></div>
+          <div class="reading-tag" style="color:var(--teal)">Practice</div>
+          <div class="reading-title">Running a Good Session</div>
+          <p class="reading-desc">Environment, intention framing, duration, and control sessions — the protocol decisions that determine data quality.</p>
+        </div>
+        <div class="reading-card">
+          <div class="reading-accent-bar" style="background:var(--blue)"></div>
+          <div class="reading-tag" style="color:var(--blue)">Epistemology</div>
+          <div class="reading-title">The Value of Null Results</div>
+          <p class="reading-desc">Why finding nothing is finding something. The file drawer problem, Bayesian reasoning, and sitting with uncertainty.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section class="privacy">
+    <div class="container reveal">
+      <div class="section-tag">Data & Privacy</div>
+      <h2 class="section-title">Nothing leaves<br>your device</h2>
+      <p class="section-body">The app makes one external connection: to the Cisco Outshift QRNG API to fetch quantum random numbers. All session data, all analysis, all results — stored locally on your device only.</p>
+
+      <div class="privacy-grid" style="margin-top:48px">
+        <div class="privacy-item">
+          <span class="privacy-icon">◎</span>
+          <div>
+            <div class="privacy-label">No Accounts or Login</div>
+            <p class="privacy-desc">No email, no profile, no authentication of any kind. Nothing to identify you.</p>
+          </div>
+        </div>
+        <div class="privacy-item">
+          <span class="privacy-icon">◎</span>
+          <div>
+            <div class="privacy-label">No Analytics or Tracking</div>
+            <p class="privacy-desc">No SDKs, no crash reporting, no usage data. The app has no visibility into how you use it.</p>
+          </div>
+        </div>
+        <div class="privacy-item">
+          <span class="privacy-icon">◎</span>
+          <div>
+            <div class="privacy-label">No Audio Recording</div>
+            <p class="privacy-desc">Microphone permission is used only for instantaneous dB measurement. No audio is captured, stored, or transmitted at any point.</p>
+          </div>
+        </div>
+        <div class="privacy-item">
+          <span class="privacy-icon">◎</span>
+          <div>
+            <div class="privacy-label">No Ads, Ever</div>
+            <p class="privacy-desc">Free, ad-free, open source. The app is funded entirely by voluntary contributions from users who find it valuable.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELEASE NOTES -->
+  <section id="releases" style="padding:100px 0;background:#030308;border-top:1px solid rgba(255,255,255,0.05)">
+    <div class="container reveal">
+      <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(255,107,107,0.55);text-transform:uppercase;margin-bottom:14px;text-align:center">Changelog</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,54px);font-weight:300;line-height:1.05;letter-spacing:-1px;color:#fff;text-align:center;margin-bottom:60px">Release <em style="color:rgba(255,107,107,0.9);font-style:italic">History</em></h2>
+
+      <!-- v2.0.0 -->
+      <div style="max-width:760px;margin:0 auto 32px;border:1px solid rgba(255,107,107,0.18);border-radius:3px;overflow:hidden">
+        <div style="padding:22px 32px;background:rgba(255,107,107,0.05);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,107,107,0.12);flex-wrap:wrap;gap:10px">
+          <div>
+            <span style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(255,107,107,0.6);text-transform:uppercase;margin-right:12px">Latest</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:#fff">v2.0.0 — Major Overhaul</span>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:1px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:4px">March 2026</div>
+            <a href="https://github.com/WickedDarko/mind-influence-lab/releases" style="font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:1px;color:rgba(255,107,107,0.7);text-decoration:none;text-transform:uppercase">↓ Download APK</a>
+          </div>
+        </div>
+        <div style="padding:28px 32px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:7px;letter-spacing:2px;color:rgba(0,229,176,0.55);text-transform:uppercase;margin-bottom:12px">New</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:10px"><span style="color:rgba(0,229,176,0.55);flex-shrink:0;font-size:12px">+</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Advanced Lab — 6-channel recording + spatial heatmap</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(0,229,176,0.55);flex-shrink:0;font-size:12px">+</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Quantum RNG via Cisco Outshift vacuum fluctuations</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(0,229,176,0.55);flex-shrink:0;font-size:12px">+</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Vault — longitudinal history, trend charts, CSV export</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(0,229,176,0.55);flex-shrink:0;font-size:12px">+</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Profile screen with achievements + milestone badges</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(0,229,176,0.55);flex-shrink:0;font-size:12px">+</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Focus Calibration — breathing + stillness exercises</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(0,229,176,0.55);flex-shrink:0;font-size:12px">+</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Reading Room — 9 scientific articles + Glossary</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(0,229,176,0.55);flex-shrink:0;font-size:12px">+</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Phase analysis + coherence score + RNG source breakdown</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(0,229,176,0.55);flex-shrink:0;font-size:12px">+</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Wakelock — screen stays on during sessions</span></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:7px;letter-spacing:2px;color:rgba(255,159,67,0.55);text-transform:uppercase;margin-bottom:12px">Changed &amp; Fixed</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:10px"><span style="color:rgba(255,159,67,0.55);flex-shrink:0;font-size:12px">↻</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Full UI/UX overhaul — new design system across all screens</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(255,159,67,0.55);flex-shrink:0;font-size:12px">↻</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Animated home screen card deck replaces old layout</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(255,159,67,0.55);flex-shrink:0;font-size:12px">↻</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">QRNG migrated ANU → Cisco Outshift</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(255,159,67,0.55);flex-shrink:0;font-size:12px">↻</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Results screen rebuilt with heatmap + phase view</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(180,140,255,0.65);flex-shrink:0;font-size:12px">✓</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Fixed RNG buffered stream silent failure</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(180,140,255,0.65);flex-shrink:0;font-size:12px">✓</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Fixed wakelock missing on both experiment screens</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(180,140,255,0.65);flex-shrink:0;font-size:12px">✓</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Fixed phase analysis data cross-contamination</span></div>
+              <div style="display:flex;gap:10px"><span style="color:rgba(180,140,255,0.65);flex-shrink:0;font-size:12px">✓</span><span style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:rgba(255,255,255,0.52);line-height:1.55">Fixed carousel auto-scroll + privacy policy link</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- v1.2.0 -->
+      <div style="max-width:760px;margin:0 auto 16px;border:1px solid rgba(255,255,255,0.07);border-radius:3px;overflow:hidden">
+        <div style="padding:16px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05)">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:rgba(255,255,255,0.5)">v1.2.0</span>
+          <span style="font-family:'Space Mono',monospace;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,0.18);text-transform:uppercase">Late 2025</span>
+        </div>
+        <div style="padding:18px 32px;display:flex;flex-wrap:wrap;gap:6px 24px">
+          <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:rgba(255,255,255,0.32)">+ ANU QRNG — first live quantum random numbers</span>
+          <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:rgba(255,255,255,0.32)">+ Magnetometer deviation tracking</span>
+          <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:rgba(255,255,255,0.32)">+ Barometer channel</span>
+          <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:rgba(255,255,255,0.32)">+ CSV export</span>
+          <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:rgba(255,255,255,0.32)">+ Results screen with z-score</span>
+        </div>
+      </div>
+
+      <!-- v1.1.0 -->
+      <div style="max-width:760px;margin:0 auto;border:1px solid rgba(255,255,255,0.05);border-radius:3px;overflow:hidden">
+        <div style="padding:16px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:rgba(255,255,255,0.35)">v1.1.0</span>
+          <span style="font-family:'Space Mono',monospace;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,0.12);text-transform:uppercase">Mid 2025</span>
+        </div>
+        <div style="padding:18px 32px;display:flex;flex-wrap:wrap;gap:6px 24px">
+          <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:rgba(255,255,255,0.22)">+ Initial release — local entropy RNG</span>
+          <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:rgba(255,255,255,0.22)">+ Sound (dB) monitoring</span>
+          <span style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:300;color:rgba(255,255,255,0.22)">+ Basic session history</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER CTA -->
+  <section class="footer-cta">
+    <div class="footer-glow"></div>
+    <div class="container reveal" style="position:relative">
+      <div class="footer-cta-tag">Begin the experiment</div>
+      <h2 class="footer-cta-title">Your data is<br><em>waiting to be collected</em></h2>
+      <p class="footer-cta-body">A single session means nothing. Fifty sessions, run consistently, with honest attention to both positive and null results — that is where your personal dataset begins to say something.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <a href="https://github.com/wickeddarko/mind-influence-lab/releases" class="btn-primary">
+          ↓ Download APK — Android 8.0+
+        </a>
+        <a href="https://wickeddarko.github.io/mind-influence-lab/privacy-policy.html" class="btn-secondary">
+          Privacy Policy
+        </a>
+      </div>
+      <p style="margin-top:24px;font-family:'Space Mono',monospace;font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:1px">
+        Enable "Install unknown apps" in Android settings · Free · No account required
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-links">
+      <a href="https://github.com/wickeddarko/mind-influence-lab">GitHub</a>
+      <a href="https://github.com/wickeddarko/mind-influence-lab/releases">Releases</a>
+      <a href="https://github.com/wickeddarko/mind-influence-lab/issues">Issues</a>
+      <a href="https://wickeddarko.github.io/mind-influence-lab/privacy-policy.html">Privacy</a>
+      <a href="https://buymeacoffee.com/kannanlukom">Support</a>
+    </div>
+    <div class="footer-copy">Mind Influence Lab · v2.0.0 · March 2026</div>
+  </footer>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <p>This app is a personal research tool for exploratory and educational purposes only. It is not a medical, diagnostic, or scientific device. The hypothesis that consciousness can influence random physical systems is not established science. Single sessions are statistically inconclusive. This app is not affiliated with Princeton University or the PEAR research program. All findings referenced are from published or publicly available sources and should be evaluated critically.</p>
+  </div>
+
+</div><!-- .page -->
+
+<script>
+  // ── STARFIELD ────────────────────────────────────────────────────────────
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < 120; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 0.8 + 0.1,
+        a: Math.random() * 0.4 + 0.05,
+        speed: Math.random() * 0.015 + 0.005,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+
+  function drawStars(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const s of stars) {
+      const alpha = s.a * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(drawStars);
+  }
+
+  resize();
+  initStars();
+  window.addEventListener('resize', () => { resize(); initStars(); });
+  requestAnimationFrame(drawStars);
+
+  // ── SCROLL REVEAL ────────────────────────────────────────────────────────
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
