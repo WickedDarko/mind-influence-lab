@@ -4,7 +4,7 @@
 
 Explore the relationship between focused intention and measurable physical reality — using genuine quantum random numbers, multi-sensor environmental recording, and longitudinal statistical analysis. Inspired by the methodology of the Princeton Engineering Anomalies Research (PEAR) Lab (1979–2007).
 
-> *This is a tool for systematic self-inquiry.*
+> *visit: https://wickeddarko.github.io/mind-influence-lab/*
 
 ---
 
@@ -106,4 +106,5 @@ See [LICENSE](LICENCE.txt) for details.
 ---
 
 *Built with Flutter · Free · Offline-first · No tracking · v2.0.0*
+
 
