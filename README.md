@@ -14,7 +14,7 @@ The Advanced Lab runs structured four-phase sessions that record six independent
 
 | Channel | Source | What is measured |
 |---|---|---|
-| **Quantum RNG** | Cisco Outshift QRNG API (vacuum fluctuations) | Z-score deviation from theoretical 50/50 baseline |
+| **Quantum RNG/Local Entropy** | Cisco Outshift QRNG API (vacuum fluctuations) | Z-score deviation from theoretical 50/50 baseline |
 | **Magnetometer** | On-device hardware | Ambient magnetic field (μT), baseline-referenced |
 | **Ambient sound** | Microphone (dB only — no audio recorded) | Environmental acoustic level |
 | **Barometer** | On-device hardware | Atmospheric pressure (hPa) |
@@ -106,5 +106,6 @@ See [LICENSE](LICENCE.txt) for details.
 ---
 
 *Built with Flutter · Free · Offline-first · No tracking · v2.0.0*
+
 
 
