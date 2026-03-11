@@ -824,6 +824,7 @@
       width: 100%;
       overflow-x: auto;
       padding: 0 32px 20px;
+      padding-left: max(32px, calc((100vw - 900px) / 2 + 32px));
       scrollbar-width: thin;
       scrollbar-color: rgba(0,229,176,0.2) transparent;
       -webkit-overflow-scrolling: touch;
@@ -1207,10 +1208,10 @@
 
   <!-- SCREENSHOTS -->
   <section class="screenshots-section" style="padding:120px 0;background:#030308;border-top:1px solid rgba(255,255,255,0.04)">
-    <div class="container reveal">
+    <div class="container reveal" style="text-align:center">
       <div class="section-tag">App Screens</div>
       <h2 class="section-title">What it looks<br>like in practice</h2>
-      <p class="section-body" style="margin-bottom:52px">Four screens from the v2 release. The design is built around legibility of data — nothing decorative that isn't carrying information.</p>
+      <p class="section-body" style="margin-bottom:52px;margin-left:auto;margin-right:auto">Four screens from the v2 release. The design is built around legibility of data — nothing decorative that isn't carrying information.</p>
     </div>
     <div class="screenshots-track">
       <div class="screenshots-inner" id="screenshotsInner">
