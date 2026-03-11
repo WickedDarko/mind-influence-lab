@@ -760,19 +760,156 @@
 
     /* ── MOBILE ── */
     @media (max-width: 680px) {
-      .hypothesis-grid,
-      .privacy-grid { grid-template-columns: 1fr; }
-
-      .reading-grid { grid-template-columns: 1fr; }
-
-      .channel-row { grid-template-columns: 64px 1fr; }
-      .channel-meta { display: none; }
-
-      .stats-inner { gap: 32px; }
-
+      /* layout */
       nav { padding: 16px 20px; }
       .container { padding: 0 20px; }
       .hero { padding: 100px 20px 60px; }
+
+      /* grids */
+      .hypothesis-grid,
+      .privacy-grid { grid-template-columns: 1fr; }
+      .reading-grid { grid-template-columns: 1fr; }
+      .channel-row { grid-template-columns: 56px 1fr; }
+      .channel-meta { display: none; }
+      .stats-inner { gap: 32px; flex-direction: column; align-items: flex-start; }
+
+      /* typography */
+      .section-title { font-size: clamp(32px, 9vw, 52px); }
+      .hero-title { font-size: clamp(44px, 12vw, 72px); }
+      .footer-cta-title { font-size: clamp(32px, 9vw, 52px); }
+
+      /* hero buttons */
+      .hero-cta-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+
+      /* methodology steps — stack vertically */
+      .methodology-steps { flex-direction: column !important; }
+      .method-step { width: 100% !important; }
+
+      /* screenshots */
+      .screenshots-track { padding: 0 20px 16px; }
+      .screenshot-card { width: 200px; }
+
+      /* demo canvas stats overlay — move below canvas on mobile */
+      #demoCanvas { min-height: 180px; }
+      #demo-container [style*="position:absolute"] {
+        position: static !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 12px 20px;
+        background: #000;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        text-align: center;
+      }
+
+      /* releases grid */
+      [style*="grid-template-columns:1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* footer */
+      .footer-links { flex-direction: column; gap: 12px; align-items: center; }
+      .footer-cta { padding: 80px 20px; }
+    }
+
+    @media (max-width: 420px) {
+      .screenshot-card { width: 170px; }
+      .faq-q { font-size: 14px; }
+      .hero-title { font-size: clamp(38px, 13vw, 56px); }
+    }
+
+    /* ── SCREENSHOTS ── */
+    .screenshots-track {
+      width: 100%;
+      overflow-x: auto;
+      padding: 0 32px 20px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,229,176,0.2) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+    .screenshots-track::-webkit-scrollbar { height: 3px; }
+    .screenshots-track::-webkit-scrollbar-track { background: transparent; }
+    .screenshots-track::-webkit-scrollbar-thumb { background: rgba(0,229,176,0.25); border-radius:2px; }
+    .screenshots-inner {
+      display: flex;
+      gap: 20px;
+      width: max-content;
+      padding-bottom: 4px;
+    }
+    .screenshot-card {
+      flex-shrink: 0;
+      width: 240px;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #07070f;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .screenshot-card:hover {
+      border-color: rgba(0,229,176,0.25);
+      transform: translateY(-3px);
+    }
+    .screenshot-card img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      background: #0a0f1a;
+      min-height: 180px;
+    }
+    .screenshot-label {
+      padding: 10px 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* ── FAQ ── */
+    .faq-item {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .faq-item:first-child { border-top: 1px solid rgba(255,255,255,0.06); }
+    .faq-item:hover { background: rgba(255,255,255,0.015); }
+    .faq-q {
+      padding: 22px 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      user-select: none;
+    }
+    .faq-q::after {
+      content: '+';
+      font-family: 'Space Mono', monospace;
+      font-size: 18px;
+      color: rgba(0,229,176,0.5);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .faq-item.open .faq-q::after { transform: rotate(45deg); }
+    .faq-a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: rgba(255,255,255,0.45);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.25s ease;
+      padding: 0;
+    }
+    .faq-item.open .faq-a {
+      max-height: 500px;
+      padding-bottom: 22px;
     }
   </style>
 </head>
@@ -1061,9 +1198,134 @@
           <span class="privacy-icon">◎</span>
           <div>
             <div class="privacy-label">No Ads, Ever</div>
-            <p class="privacy-desc">Free, ad-free, open source. The app is funded entirely by voluntary contributions from users who find it valuable.</p>
+            <p class="privacy-desc">Free, ad-free. The app is funded entirely by voluntary contributions from users who find it valuable.</p>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREENSHOTS -->
+  <section class="screenshots-section" style="padding:120px 0;background:#030308;border-top:1px solid rgba(255,255,255,0.04)">
+    <div class="container reveal">
+      <div class="section-tag">App Screens</div>
+      <h2 class="section-title">What it looks<br>like in practice</h2>
+      <p class="section-body" style="margin-bottom:52px">Four screens from the v2 release. The design is built around legibility of data — nothing decorative that isn't carrying information.</p>
+    </div>
+    <div class="screenshots-track">
+      <div class="screenshots-inner" id="screenshotsInner">
+        <!-- v2 screenshots via GitHub raw — swap filenames to match your repo -->
+        <div class="screenshot-card">
+          <img src="https://raw.githubusercontent.com/WickedDarko/mind-influence-lab/main/screenshots/v2/adv_lab-home.jpg"
+               alt="Advanced experiment screen" loading="lazy" onerror="this.parentElement.style.display='none'">
+          <div class="screenshot-label">Advanced Experiment</div>
+        </div>
+        <div class="screenshot-card">
+          <img src="https://raw.githubusercontent.com/WickedDarko/mind-influence-lab/main/screenshots/v2/adv_result.jpg"
+               alt="Results screen with z-score" loading="lazy" onerror="this.parentElement.style.display='none'">
+          <div class="screenshot-label">Session Results</div>
+        </div>
+        <div class="screenshot-card">
+          <img src="https://raw.githubusercontent.com/WickedDarko/mind-influence-lab/main/screenshots/v2/reading_room.jpg"
+               alt="Reading room" loading="lazy" onerror="this.parentElement.style.display='none'">
+          <div class="screenshot-label">Reading Room</div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:28px">
+      <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.15)">← SCROLL →</span>
+    </div>
+  </section>
+
+  <!-- LIVE DEMO -->
+  <section style="padding:120px 0;background:#07070f;border-top:1px solid rgba(255,255,255,0.04)">
+    <div class="container reveal">
+      <div class="section-tag">Live Demo</div>
+      <h2 class="section-title">A PRNG running<br>in your browser</h2>
+      <p class="section-body">This is a demonstration only — it uses your browser's built-in CSPRNG (<code style="font-family:'Space Mono',monospace;font-size:12px;color:rgba(0,229,176,0.7)">window.crypto.getRandomValues()</code>), the same entropy source the app uses in Local Entropy mode. It is not connected to quantum hardware. The visualisation is here so you can see the interface and what a running z-score looks like before downloading anything.</p>
+
+      <div id="demo-container" style="margin-top:48px;background:#000;position:relative">
+
+        <!-- header bar -->
+        <div style="padding:14px 24px;background:#000;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div style="display:flex;align-items:center;gap:16px">
+            <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(0,229,176,0.7)">DEMO</span>
+            <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.18)">BROWSER CSPRNG · NOT QUANTUM</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button id="demoStartBtn" onclick="demoToggle()" style="padding:6px 18px;background:transparent;border:1px solid rgba(0,229,176,0.35);color:rgba(0,229,176,0.7);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:all 0.2s">START</button>
+            <button onclick="demoReset()" style="padding:6px 14px;background:transparent;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.25);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:all 0.2s">RESET</button>
+          </div>
+        </div>
+
+        <!-- random walk canvas -->
+        <div style="background:#000;padding:0;position:relative">
+          <canvas id="demoCanvas" style="display:block;width:100%;background:#000"></canvas>
+          <!-- floating stats overlay -->
+          <div style="position:absolute;top:16px;right:20px;display:flex;flex-direction:column;gap:6px;text-align:right">
+            <div>
+              <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.2)">Z-SCORE</div>
+              <div id="demoZ" style="font-family:'Space Mono',monospace;font-size:22px;color:rgba(0,229,176,0.9);line-height:1.1">—</div>
+            </div>
+            <div style="margin-top:4px">
+              <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.2)">SAMPLES</div>
+              <div id="demoSamples" style="font-family:'Space Mono',monospace;font-size:14px;color:rgba(103,232,249,0.7)">0</div>
+            </div>
+            <div>
+              <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(255,255,255,0.2)">RATIO</div>
+              <div id="demoRatio" style="font-family:'Space Mono',monospace;font-size:14px;color:rgba(103,232,249,0.7)">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- footer note -->
+        <div style="padding:14px 24px;background:#000;border-top:1px solid rgba(255,255,255,0.04);text-align:center">
+          <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(255,255,255,0.12)">
+            random walk of cumulative z-score over time · dashed lines = ±1.96σ significance threshold · the app also supports quantum RNG via Cisco Outshift
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section style="padding:120px 0;background:#030308;border-top:1px solid rgba(255,255,255,0.04)">
+    <div class="container reveal">
+      <div class="section-tag">Questions</div>
+      <h2 class="section-title">Frequently<br>asked</h2>
+
+      <div id="faq-list" style="margin-top:60px;max-width:760px;margin-left:auto;margin-right:auto">
+
+        <div class="faq-item" onclick="faqToggle(this)">
+          <div class="faq-q">What does a z-score actually mean?</div>
+          <div class="faq-a">A z-score measures how far an observed result is from what chance would predict, expressed in standard deviations. A z-score of 0 means your RNG output was exactly at theoretical chance. A z-score of +1.96 or above means the result would occur by chance less than 5% of the time — the conventional significance threshold in statistics. A single session with z = 2.5 does not mean anything has been demonstrated. At the effect size under investigation, a single session is always statistically inconclusive. Significance only becomes meaningful across a large number of sessions accumulated over time in the vault.</div>
+        </div>
+
+        <div class="faq-item" onclick="faqToggle(this)">
+          <div class="faq-q">What's the difference between the three RNG protocols?</div>
+          <div class="faq-a">Local Entropy draws from your device's cryptographic entropy pool — CPU timing jitter, hardware noise, thermal fluctuations. It is classically random but partially coupled to your physical environment. Live Quantum connects to Cisco Outshift's QRNG API, sourcing numbers from vacuum fluctuation measurements on remote optical hardware physically independent of your device — any deviation requires a contemporaneous causal account. Buffered Quantum fetches the entire batch before your session begins, meaning those quantum events have already occurred before you apply any intention. Deviation in buffered sessions is structurally incompatible with forward-time causation and only consistent with retrocausal accounts of the kind the transactional interpretation of quantum mechanics permits.</div>
+        </div>
+
+        <div class="faq-item" onclick="faqToggle(this)">
+          <div class="faq-q">Why does the app need location and microphone permissions?</div>
+          <div class="faq-a">Android requires location permission to access WiFi and Bluetooth signal data — this is a platform-level requirement, not something the app uses for your geographic location. The app does not request, use, store, or transmit location data. Microphone access is used to measure ambient sound level as an instantaneous decibel value — the environmental acoustic channel. No audio is recorded or stored at any point. The permission rationale sheet inside the app explains each permission at the moment it is requested.</div>
+        </div>
+
+        <div class="faq-item" onclick="faqToggle(this)">
+          <div class="faq-q">How many sessions do I need to run?</div>
+          <div class="faq-a">The effect size documented in prior research — approximately 0.1% mean deviation from chance — corresponds to Cohen's h of roughly 0.002. Detecting an effect this size at conventional significance (p&lt;0.05, 80% power) requires approximately 780,000 binary observations. At a typical session tick rate that is several hundred sessions. This is not a discouragement — it is an honest statement about the scale of the question. The vault is built for exactly this long-term accumulation. A few weeks of consistent sessions is a meaningful start to a personal dataset, not a conclusion.</div>
+        </div>
+
+        <div class="faq-item" onclick="faqToggle(this)">
+          <div class="faq-q">Does the app collect any data?</div>
+          <div class="faq-a">No. There are no accounts, no analytics, no advertising, and no data collection of any kind. The only external connection the app makes is to the Cisco Outshift QRNG API to fetch quantum random numbers when that mode is selected. All session data is stored locally on your device and never transmitted anywhere. </div>
+        </div>
+
+        <div class="faq-item" onclick="faqToggle(this)">
+          <div class="faq-q">What is the PEAR Lab and why is the app based on its methodology?</div>
+          <div class="faq-a">The Princeton Engineering Anomalies Research laboratory ran from 1979 to 2007 under aerospace engineer Robert Jahn. Over 26 years it assembled the largest database of structured mind-RNG experiments ever conducted — more than 2.5 million experimental series across 340 operators. The documented mean deviation was approximately 0.1% from theoretical chance. The methodology was criticised — particularly the choice of statistical unit and inconsistent replication — and the findings cannot be accepted as validated scientific results. The app is based on the PEAR protocol because it is the most developed and rigorously documented methodology available for this kind of personal experiment. Using it allows your personal data to be compared against the largest existing reference dataset.</div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -1243,5 +1505,188 @@
   reveals.forEach(el => observer.observe(el));
 </script>
 
+
+<script>
+// ── FAQ toggle ────────────────────────────────────────────
+function faqToggle(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+// ── PRNG Demo — random walk canvas ───────────────────────
+const demoCanvas = document.getElementById('demoCanvas');
+const demoCtx = demoCanvas.getContext('2d');
+let demoRunning = false;
+let demoInterval = null;
+let demoTotal = 0;
+let demoOnes = 0;
+let demoZHistory = []; // cumulative z at each tick
+const MAX_POINTS = 600;
+
+function cryptoBit() {
+  const arr = new Uint8Array(1);
+  window.crypto.getRandomValues(arr);
+  return arr[0] & 1;
+}
+
+function resizeCanvas() {
+  const container = demoCanvas.parentElement;
+  const w = container.clientWidth;
+  const h = Math.max(220, Math.min(320, Math.round(w * 0.36)));
+  demoCanvas.width = w;
+  demoCanvas.height = h;
+  drawWalk();
+}
+
+function drawWalk() {
+  const W = demoCanvas.width, H = demoCanvas.height;
+  const ctx = demoCtx;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
+
+  const zRange = 4; // ±4σ visible
+  const zeroY = H / 2;
+  const zScale = (H * 0.42) / zRange;
+
+  // subtle horizontal grid lines
+  [-3,-2,-1,1,2,3].forEach(sig => {
+    const y = zeroY - sig * zScale;
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  });
+
+  // zero line
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, zeroY); ctx.lineTo(W, zeroY); ctx.stroke();
+
+  // ±1.96σ threshold lines
+  [1.96, -1.96].forEach(sig => {
+    const y = zeroY - sig * zScale;
+    ctx.strokeStyle = 'rgba(255,107,107,0.25)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 6]);
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    ctx.setLineDash([]);
+  });
+
+  // sigma labels right edge
+  [['±1.96σ', 1.96], ['+3σ', 3], ['-3σ', -3]].forEach(([lbl, sig]) => {
+    const y = zeroY - sig * zScale;
+    ctx.font = '10px "Space Mono", monospace';
+    ctx.fillStyle = sig === 1.96 || sig === -1.96
+      ? 'rgba(255,107,107,0.35)' : 'rgba(255,255,255,0.12)';
+    ctx.textAlign = 'right';
+    if (Math.abs(sig) !== 1.96 || sig > 0) ctx.fillText(lbl, W - 6, y - 4);
+  });
+
+  if (demoZHistory.length < 2) return;
+
+  const pts = demoZHistory.length;
+  const xStep = W / Math.max(pts - 1, MAX_POINTS - 1);
+
+  // build path
+  ctx.beginPath();
+  demoZHistory.forEach((z, i) => {
+    const x = i * xStep;
+    const y = zeroY - z * zScale;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+
+  // stroke with color based on current z
+  const curZ = demoZHistory[pts - 1];
+  const lineColor = Math.abs(curZ) > 1.96
+    ? 'rgba(251,191,36,0.85)'
+    : 'rgba(0,229,176,0.75)';
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 1.5;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // fill under line — very subtle
+  const lastX = (pts - 1) * xStep;
+  ctx.lineTo(lastX, zeroY);
+  ctx.lineTo(0, zeroY);
+  ctx.closePath();
+  ctx.fillStyle = Math.abs(curZ) > 1.96
+    ? 'rgba(251,191,36,0.04)' : 'rgba(0,229,176,0.04)';
+  ctx.fill();
+
+  // current point dot
+  const dotX = (pts - 1) * xStep;
+  const dotY = zeroY - curZ * zScale;
+  ctx.fillStyle = lineColor;
+  ctx.beginPath();
+  ctx.arc(dotX, dotY, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function demoTick() {
+  const BATCH = 12;
+  for (let i = 0; i < BATCH; i++) {
+    const b = cryptoBit();
+    demoTotal++;
+    if (b === 1) demoOnes++;
+  }
+
+  const z = demoTotal > 10
+    ? (demoOnes - demoTotal / 2) / Math.sqrt(demoTotal / 4)
+    : 0;
+
+  // keep history capped
+  demoZHistory.push(z);
+  if (demoZHistory.length > MAX_POINTS) demoZHistory.shift();
+
+  // update stats
+  document.getElementById('demoSamples').textContent = demoTotal.toLocaleString();
+  const ratio = demoOnes / demoTotal;
+  document.getElementById('demoRatio').textContent = (ratio * 100).toFixed(3) + '%';
+
+  const zEl = document.getElementById('demoZ');
+  zEl.textContent = demoTotal > 10 ? z.toFixed(3) : '—';
+  const sig = Math.abs(z) > 1.96;
+  zEl.style.color = sig ? 'rgba(251,191,36,0.95)' : 'rgba(0,229,176,0.9)';
+
+  drawWalk();
+}
+
+function demoToggle() {
+  const btn = document.getElementById('demoStartBtn');
+  if (demoRunning) {
+    clearInterval(demoInterval);
+    demoRunning = false;
+    btn.textContent = 'RESUME';
+    btn.style.color = 'rgba(255,255,255,0.4)';
+    btn.style.borderColor = 'rgba(255,255,255,0.15)';
+  } else {
+    demoInterval = setInterval(demoTick, 100);
+    demoRunning = true;
+    btn.textContent = 'PAUSE';
+    btn.style.color = 'rgba(0,229,176,0.8)';
+    btn.style.borderColor = 'rgba(0,229,176,0.4)';
+  }
+}
+
+function demoReset() {
+  if (demoRunning) { clearInterval(demoInterval); demoRunning = false; }
+  demoTotal = 0; demoOnes = 0; demoZHistory = [];
+  const btn = document.getElementById('demoStartBtn');
+  btn.textContent = 'START';
+  btn.style.color = 'rgba(0,229,176,0.7)';
+  btn.style.borderColor = 'rgba(0,229,176,0.35)';
+  document.getElementById('demoSamples').textContent = '0';
+  document.getElementById('demoRatio').textContent = '—';
+  document.getElementById('demoZ').textContent = '—';
+  document.getElementById('demoZ').style.color = 'rgba(0,229,176,0.9)';
+  drawWalk();
+}
+
+// init canvas size
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+</script>
 </body>
 </html>
