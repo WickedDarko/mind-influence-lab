@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Open Lab — Mind Influence Lab Collective Dataset</title>
+<meta name="description" content="Upload and analyse your Mind Influence Lab session data. Explore z-score distributions, phase decline patterns, and protocol comparisons across a growing collective dataset."/>
+<link rel="canonical" href="https://wickeddarko.github.io/mind-influence-lab/open-lab/"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:     #030308;
+  --bg2:    #07070f;
+  --teal:   #00E5B0;
+  --red:    #FF6B6B;
+  --amber:  #FF9F43;
+  --purple: #B48CFF;
+  --blue:   #7B8CDE;
+  --cyan:   #00B8D4;
+  --dim:    rgba(255,255,255,0.45);
+  --faint:  rgba(255,255,255,0.18);
+  --ghost:  rgba(255,255,255,0.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:#fff;font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");background-size:256px;pointer-events:none;z-index:1000;opacity:0.6}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(3,3,8,0.96),transparent);backdrop-filter:blur(4px)}
+.nav-wordmark{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:rgba(255,255,255,0.25);text-transform:uppercase;text-decoration:none}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-link{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.4);text-decoration:none;border-bottom:1px solid rgba(0,229,176,0.25);padding-bottom:1px;transition:color 0.2s}
+.nav-link:hover{color:rgba(255,255,255,0.8)}
+.nav-badge{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:2px;color:rgba(0,229,176,0.55);text-transform:uppercase;border:1px solid rgba(0,229,176,0.2);padding:3px 8px;border-radius:2px}
+
+/* PAGE */
+.page{position:relative;z-index:1}
+.container{max-width:960px;margin:0 auto;padding:0 32px}
+
+/* HERO */
+.hero{padding:140px 0 80px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.hero-tag{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(0,229,176,0.55);text-transform:uppercase;margin-bottom:20px}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,6vw,72px);font-weight:300;line-height:1.05;letter-spacing:-1.5px;color:#fff;margin-bottom:24px}
+.hero-title em{color:rgba(0,229,176,0.85);font-style:italic}
+.hero-body{font-size:15px;line-height:1.75;color:rgba(255,255,255,0.48);max-width:640px;margin-bottom:40px}
+.hero-pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:48px}
+.pill{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:5px 12px;border-radius:20px;border:1px solid}
+
+/* RESEARCH FRAMING */
+.framing{padding:72px 0;border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.01)}
+.framing-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:48px}
+.framing-card{padding:24px;border:1px solid rgba(255,255,255,0.07);border-radius:3px}
+.framing-num{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.18);margin-bottom:10px}
+.framing-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:rgba(255,255,255,0.75);margin-bottom:8px}
+.framing-body{font-size:12px;line-height:1.65;color:rgba(255,255,255,0.38)}
+
+/* UPLOAD SECTION */
+.upload-section{padding:80px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.section-tag{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(0,229,176,0.55);text-transform:uppercase;margin-bottom:12px}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,4vw,46px);font-weight:300;line-height:1.1;letter-spacing:-0.5px;margin-bottom:16px}
+.section-body{font-size:14px;line-height:1.75;color:rgba(255,255,255,0.45);max-width:600px;margin-bottom:40px}
+
+.upload-area{border:1px dashed rgba(0,229,176,0.3);border-radius:4px;padding:52px 40px;text-align:center;cursor:pointer;transition:all 0.25s;position:relative;background:rgba(0,229,176,0.02)}
+.upload-area:hover,.upload-area.drag{border-color:rgba(0,229,176,0.65);background:rgba(0,229,176,0.05)}
+.upload-icon{font-size:28px;margin-bottom:14px;opacity:0.5}
+.upload-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:rgba(255,255,255,0.7);margin-bottom:8px}
+.upload-sub{font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:20px;line-height:1.6}
+.upload-btn{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(0,229,176,0.35);color:rgba(0,229,176,0.7);background:transparent;padding:10px 22px;cursor:pointer;border-radius:2px;transition:all 0.2s}
+.upload-btn:hover{background:rgba(0,229,176,0.08);border-color:rgba(0,229,176,0.6)}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+
+.format-note{margin-top:16px;padding:14px 20px;border:1px solid rgba(255,255,255,0.06);border-radius:3px;background:rgba(255,255,255,0.02)}
+.format-note p{font-size:11px;color:rgba(255,255,255,0.28);line-height:1.7}
+.format-note code{font-family:'Space Mono',monospace;font-size:10px;color:rgba(0,229,176,0.55)}
+
+/* FILTER BAR */
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;padding:16px 0;margin-bottom:32px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.filter-group{display:flex;flex-direction:column;gap:4px}
+.filter-label{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:2px;color:rgba(255,255,255,0.25);text-transform:uppercase}
+.filter-select{font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);padding:6px 10px;border-radius:2px;cursor:pointer;min-width:120px}
+.filter-select:focus{outline:none;border-color:rgba(0,229,176,0.4)}
+.filter-reset{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:rgba(255,107,107,0.55);background:transparent;border:1px solid rgba(255,107,107,0.2);padding:6px 12px;border-radius:2px;cursor:pointer;align-self:flex-end;text-transform:uppercase;transition:all 0.2s}
+.filter-reset:hover{color:rgba(255,107,107,0.85);border-color:rgba(255,107,107,0.4)}
+
+/* ANALYSIS */
+#analysis{display:none;padding:0 0 80px}
+.analysis-inner{padding-top:64px}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-bottom:56px}
+.stat-card{padding:20px 22px;border:1px solid rgba(255,255,255,0.07);border-radius:3px;background:rgba(255,255,255,0.01)}
+.stat-label{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:2px;color:rgba(255,255,255,0.28);text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-family:'Space Mono',monospace;font-size:22px;font-weight:400;line-height:1}
+.stat-sub{font-size:10px;color:rgba(255,255,255,0.25);margin-top:4px}
+
+/* CHART ROWS */
+.chart-section{margin-bottom:60px}
+.chart-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:rgba(255,255,255,0.75);margin-bottom:6px}
+.chart-desc{font-size:12px;color:rgba(255,255,255,0.32);margin-bottom:20px;line-height:1.6}
+.chart-wrap{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:3px;padding:24px;position:relative}
+.chart-row-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:60px}
+
+/* SESSION TABLE */
+.session-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.session-table th{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:1.5px;color:rgba(255,255,255,0.25);text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.07)}
+.session-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.55);line-height:1.4}
+.session-table tr:hover td{background:rgba(255,255,255,0.025)}
+.z-positive{color:rgba(0,229,176,0.85)}
+.z-negative{color:rgba(255,107,107,0.75)}
+.z-neutral{color:rgba(255,255,255,0.4)}
+
+/* COLLECTIVE PLACEHOLDER */
+.collective{padding:80px 0;background:rgba(255,255,255,0.01);border-top:1px solid rgba(255,255,255,0.05)}
+.collective-inner{max-width:680px;margin:0 auto;text-align:center}
+.collective-badge{display:inline-block;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:3px;color:rgba(255,159,67,0.65);text-transform:uppercase;border:1px solid rgba(255,159,67,0.2);padding:4px 12px;border-radius:2px;margin-bottom:24px}
+.collective-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:300;line-height:1.1;margin-bottom:16px}
+.collective-title em{font-style:italic;color:rgba(255,159,67,0.75)}
+.collective-body{font-size:14px;line-height:1.75;color:rgba(255,255,255,0.4);margin-bottom:36px}
+.contribute-steps{display:grid;grid-template-columns:1fr 1fr;gap:16px;text-align:left;margin-bottom:36px}
+.contribute-step{padding:20px;border:1px solid rgba(255,255,255,0.07);border-radius:3px}
+.step-num{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(255,159,67,0.5);margin-bottom:8px}
+.step-title{font-size:13px;font-weight:400;color:rgba(255,255,255,0.65);margin-bottom:4px}
+.step-body{font-size:11px;color:rgba(255,255,255,0.32);line-height:1.6}
+.contribute-cta{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(255,159,67,0.3);color:rgba(255,159,67,0.7);background:transparent;padding:12px 24px;border-radius:2px;cursor:not-allowed;opacity:0.7}
+
+/* DOWNLOAD */
+.download-band{padding:48px 0;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05)}
+.download-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.download-text h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:rgba(255,255,255,0.75);margin-bottom:4px}
+.download-text p{font-size:12px;color:rgba(255,255,255,0.32);line-height:1.6}
+.btn-download{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(0,229,176,0.3);color:rgba(0,229,176,0.7);background:transparent;padding:12px 22px;border-radius:2px;cursor:not-allowed;opacity:0.55;text-decoration:none}
+
+/* FOOTER */
+footer{padding:40px 32px;border-top:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(255,255,255,0.22);text-decoration:none;text-transform:uppercase;transition:color 0.2s}
+.footer-links a:hover{color:rgba(255,255,255,0.55)}
+.footer-copy{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:rgba(255,255,255,0.15)}
+
+@media(max-width:700px){
+  .framing-grid{grid-template-columns:1fr}
+  .chart-row-2{grid-template-columns:1fr}
+  .contribute-steps{grid-template-columns:1fr}
+  .filter-bar{flex-direction:column}
+  nav{padding:16px 20px}
+  .container{padding:0 20px}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<!-- NAV -->
+<nav>
+  <a href="../" class="nav-wordmark">← Mind Influence Lab</a>
+  <div class="nav-right">
+    <a href="../reading-room/" class="nav-link">Reading Room</a>
+    <span class="nav-badge">Open Lab</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">Open Lab · Collective Research</div>
+    <h1 class="hero-title">Your data.<br><em>The larger picture.</em></h1>
+    <p class="hero-body">Upload your exported session CSV and analyse it alongside a growing shared dataset from other experimenters. The single most important limitation of personal RNG research is sample size — a collective dataset addresses it directly. Every session anyone contributes is one more data point toward a statistically meaningful aggregate.</p>
+    <div class="hero-pills">
+      <span class="pill" style="color:rgba(0,229,176,0.7);border-color:rgba(0,229,176,0.2)">Client-side analysis — nothing uploaded anywhere</span>
+      <span class="pill" style="color:rgba(255,159,67,0.7);border-color:rgba(255,159,67,0.2)">Collective dataset — coming soon</span>
+      <span class="pill" style="color:rgba(180,140,255,0.7);border-color:rgba(180,140,255,0.2)">Raw CSV download</span>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH FRAMING -->
+<section class="framing">
+  <div class="container">
+    <div class="section-tag">Research Value</div>
+    <h2 class="section-title" style="font-family:'Cormorant Garamond',serif;font-weight:300;letter-spacing:-0.5px">Why a collective<br>dataset matters</h2>
+    <div class="framing-grid">
+      <div class="framing-card">
+        <div class="framing-num">01</div>
+        <div class="framing-title">The sample size problem</div>
+        <p class="framing-body">The effect size documented by PEAR — approximately 0.0003 — requires roughly 26,000 independent measurement events to reach p &lt; 0.05 at adequate power. No individual experimenter will accumulate that in a reasonable time frame. A collective dataset crosses that threshold orders of magnitude faster.</p>
+      </div>
+      <div class="framing-card">
+        <div class="framing-num">02</div>
+        <div class="framing-title">Cross-operator analysis</div>
+        <p class="framing-body">The most scientifically interesting question is not whether any individual shows an effect — it is whether the effect replicates across independent operators under similar conditions. Collective data allows the kind of operator-level comparison the original PEAR studies used to validate their findings.</p>
+      </div>
+      <div class="framing-card">
+        <div class="framing-num">03</div>
+        <div class="framing-title">Protocol comparison</div>
+        <p class="framing-body">Live quantum, buffered quantum, and local entropy test structurally different hypotheses. A collective dataset with enough sessions in each condition makes it possible to compare effect sizes across protocols — something no single experimenter's dataset can do with statistical confidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UPLOAD -->
+<section class="upload-section">
+  <div class="container">
+    <div class="section-tag">Analyse Your Data</div>
+    <h2 class="section-title">Upload your<br>session CSV</h2>
+    <p class="section-body">Export your sessions from the app's vault (batch export, all sessions) and drop the CSV here. All analysis happens in your browser — the file never leaves your device.</p>
+
+    <div class="upload-area" id="uploadArea">
+      <input type="file" accept=".csv" id="fileInput" onchange="handleFile(event)"/>
+      <div class="upload-icon">⬆</div>
+      <div class="upload-title">Drop your session CSV here</div>
+      <p class="upload-sub">Export from the app: Vault → download icon (top right) → shares a <code style="font-family:'Space Mono',monospace;font-size:11px;color:rgba(0,229,176,0.6)">mind_influence_lab_all_*.csv</code> file<br>Open that file here to analyse it.</p>
+      <button class="upload-btn" onclick="document.getElementById('fileInput').click();event.stopPropagation()">Choose file</button>
+    </div>
+
+    <div class="format-note" style="margin-top:16px">
+      <p>Expected format: batch export CSV from the Mind Influence Lab app (v2.1.0+). Columns include <code>session_id</code>, <code>rng_z_score</code>, <code>rng_protocol</code>, <code>phase_early_z</code>, <code>phase_late_z</code>, <code>intention</code>, <code>coherence_score</code>, <code>dominant_source</code>, and 33 others. Individual session exports (single-session full stream CSVs) are not supported here — use the batch export.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ANALYSIS (hidden until upload) -->
+<section id="analysis">
+  <div class="container analysis-inner">
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Protocol</span>
+        <select class="filter-select" id="filterProtocol" onchange="applyFilters()">
+          <option value="all">All protocols</option>
+          <option value="live">Live quantum</option>
+          <option value="buffered">Buffered quantum</option>
+          <option value="localEntropy">Local entropy</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Provider</span>
+        <select class="filter-select" id="filterProvider" onchange="applyFilters()">
+          <option value="all">All providers</option>
+          <option value="outshift">Outshift</option>
+          <option value="anu">ANU</option>
+          <option value="local">Local</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Validity</span>
+        <select class="filter-select" id="filterValid" onchange="applyFilters()">
+          <option value="all">All sessions</option>
+          <option value="true">Valid only</option>
+          <option value="false">Invalid only</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Min coherence</span>
+        <select class="filter-select" id="filterCoherence" onchange="applyFilters()">
+          <option value="0">Any</option>
+          <option value="50">≥ 50</option>
+          <option value="70">≥ 70</option>
+          <option value="85">≥ 85</option>
+        </select>
+      </div>
+      <button class="filter-reset" onclick="resetFilters()">Reset filters</button>
+      <div style="margin-left:auto;align-self:flex-end;font-family:'Space Mono',monospace;font-size:9px;color:rgba(255,255,255,0.25)" id="filterCount"></div>
+    </div>
+
+    <!-- OVERVIEW STATS -->
+    <div class="stat-grid" id="statGrid"></div>
+
+    <!-- CHARTS ROW 1: Cumulative Z + Z Distribution -->
+    <div class="chart-row-2">
+      <div>
+        <div class="chart-title">Cumulative Z-Score Drift</div>
+        <p class="chart-desc">Drift from zero across sessions in chronological order. Sustained positive drift suggests a consistent above-chance effect. A flat walk is the null result.</p>
+        <div class="chart-wrap" style="height:240px"><canvas id="chartCumulative"></canvas></div>
+      </div>
+      <div>
+        <div class="chart-title">Z-Score Distribution</div>
+        <p class="chart-desc">How often each z-score range occurred. A normal distribution centred at zero is the null hypothesis. Positive skew suggests a systematic effect.</p>
+        <div class="chart-wrap" style="height:240px"><canvas id="chartDistribution"></canvas></div>
+      </div>
+    </div>
+
+    <!-- CHART: Phase Decline -->
+    <div class="chart-section">
+      <div class="chart-title">Phase Decline — Early vs Late Z per Session</div>
+      <p class="chart-desc">Early-phase z-score (orange) and late-phase z-score (purple) plotted per session in chronological order. When the early line consistently sits above the late line, the PEAR decline effect is present — the effect appears stronger at the start of sessions and diminishes as the session continues.</p>
+      <div class="chart-wrap" style="height:220px"><canvas id="chartPhase"></canvas></div>
+    </div>
+
+    <!-- CHARTS ROW 2: Protocol Breakdown + Time-of-Day -->
+    <div class="chart-row-2">
+      <div>
+        <div class="chart-title">Protocol Breakdown</div>
+        <p class="chart-desc">Session counts and average z-score per protocol.</p>
+        <div class="chart-wrap" style="height:240px"><canvas id="chartProtocol"></canvas></div>
+      </div>
+      <div>
+        <div class="chart-title">Z-Score by Time of Day</div>
+        <p class="chart-desc">Average z-score per hour sessions were started. Consistent patterns may point to circadian or environmental factors.</p>
+        <div class="chart-wrap" style="height:240px"><canvas id="chartTodh"></canvas></div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW 3: Intention + Coherence vs Z -->
+    <div class="chart-row-2">
+      <div>
+        <div class="chart-title">Z-Score by Intention Type</div>
+        <p class="chart-desc">Average z-score grouped by the intention label recorded before each session.</p>
+        <div class="chart-wrap" style="height:240px"><canvas id="chartIntention"></canvas></div>
+      </div>
+      <div>
+        <div class="chart-title">Coherence Score vs Z-Score</div>
+        <p class="chart-desc">Scatter plot of session coherence (x) against z-score (y). A positive correlation would suggest better experimental conditions produce larger effects.</p>
+        <div class="chart-wrap" style="height:240px"><canvas id="chartCoherence"></canvas></div>
+      </div>
+    </div>
+
+    <!-- SESSION TABLE -->
+    <div class="chart-section">
+      <div class="chart-title">Session Log</div>
+      <p class="chart-desc">All filtered sessions. Click column headers to sort.</p>
+      <div class="chart-wrap" style="overflow-x:auto;padding:0">
+        <table class="session-table" id="sessionTable">
+          <thead>
+            <tr>
+              <th onclick="sortTable('date')" style="cursor:pointer">Date ↕</th>
+              <th onclick="sortTable('rng_z_score')" style="cursor:pointer">Z-Score ↕</th>
+              <th onclick="sortTable('rng_protocol')" style="cursor:pointer">Protocol ↕</th>
+              <th onclick="sortTable('dominant_source')" style="cursor:pointer">Source ↕</th>
+              <th onclick="sortTable('intention')" style="cursor:pointer">Intention ↕</th>
+              <th onclick="sortTable('coherence_score')" style="cursor:pointer">Coherence ↕</th>
+              <th onclick="sortTable('phase_early_z')" style="cursor:pointer">Early Z ↕</th>
+              <th onclick="sortTable('phase_late_z')" style="cursor:pointer">Late Z ↕</th>
+              <th onclick="sortTable('total_rng_ticks')" style="cursor:pointer">Ticks ↕</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- COLLECTIVE PLACEHOLDER -->
+<section class="collective" id="collective">
+  <div class="container">
+    <div class="collective-inner">
+      <div class="collective-badge">Coming Soon</div>
+      <h2 class="collective-title">Contribute to the<br><em>collective dataset</em></h2>
+      <p class="collective-body">The shared dataset will aggregate anonymised session summaries from all contributors — no notes, no identifying fields, only the measured numerical data. Protocol, z-score, phase analysis, coherence, environmental readings. Once enough sessions are contributed, the dataset will be publicly available here for download and analysis.</p>
+      <div class="contribute-steps">
+        <div class="contribute-step">
+          <div class="step-num">01 · Export</div>
+          <div class="step-title">Export from the app</div>
+          <p class="step-body">Use the vault's batch export to generate your session summary CSV. This file contains only measured and computed numerical data — no free-text notes or identifying fields.</p>
+        </div>
+        <div class="contribute-step">
+          <div class="step-num">02 · Submit</div>
+          <div class="step-title">Submit via GitHub</div>
+          <p class="step-body">Open a GitHub Issue with the CSV attached. A submission template is provided — only the required columns are used. Your contribution will be anonymised before it is added to the shared dataset.</p>
+        </div>
+        <div class="contribute-step">
+          <div class="step-num">03 · Verify</div>
+          <div class="step-title">Dataset is public</div>
+          <p class="step-body">The master dataset file lives in the repository as a versioned commit. Every addition is traceable. Anyone can download it, verify the contents, and run their own analysis.</p>
+        </div>
+        <div class="contribute-step">
+          <div class="step-num">04 · Analyse</div>
+          <div class="step-title">Come back here</div>
+          <p class="step-body">Once the collective dataset is live, this page will load it automatically alongside your own uploaded data. You will be able to filter by operator, protocol, and date range across the entire aggregate.</p>
+        </div>
+      </div>
+      <button class="contribute-cta" disabled title="Coming soon — open a GitHub Issue to contribute early">Submit Data · Coming Soon</button>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD BAND -->
+<div class="download-band">
+  <div class="container">
+    <div class="download-inner">
+      <div class="download-text">
+        <h3>Download the collective dataset</h3>
+        <p>Raw CSV file of all contributed sessions. Use it in R, Python, SPSS, or any analysis environment.<br>Updated with each new contribution batch. Format matches the batch export from the app.</p>
+      </div>
+      <a href="#" class="btn-download" title="No collective data yet — check back once contributions begin">↓ dataset.csv · Not yet available</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="../">Home</a>
+    <a href="https://github.com/wickeddarko/mind-influence-lab">GitHub</a>
+    <a href="https://github.com/wickeddarko/mind-influence-lab/releases">Releases</a>
+    <a href="https://github.com/wickeddarko/mind-influence-lab/issues">Issues</a>
+  </div>
+  <div class="footer-copy">Mind Influence Lab · Open Lab · v2.1.0</div>
+</footer>
+
+</div><!-- .page -->
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────────────
+let allRows    = [];   // all parsed rows
+let filtered   = [];   // after filters applied
+let sortKey    = 'date';
+let sortAsc    = false;
+let charts     = {};   // chart instances
+
+const CHART_DEFAULTS = {
+  color:   'rgba(0,229,176,0.75)',
+  grid:    'rgba(255,255,255,0.05)',
+  tick:    'rgba(255,255,255,0.25)',
+  font:    "'Space Mono', monospace",
+};
+
+Chart.defaults.color = CHART_DEFAULTS.tick;
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.font.size = 11;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DRAG & DROP
+// ─────────────────────────────────────────────────────────────────────────────
+const uploadArea = document.getElementById('uploadArea');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) parseCSV(file);
+});
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (file) parseCSV(file);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PARSE
+// ─────────────────────────────────────────────────────────────────────────────
+function parseCSV(file) {
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    dynamicTyping: false,
+    complete: function(results) {
+      if (!results.data || results.data.length === 0) {
+        alert('No data found in this file. Make sure you are uploading the batch export from the Mind Influence Lab vault.');
+        return;
+      }
+      // Validate it looks like our CSV
+      const row0 = results.data[0];
+      if (!('rng_z_score' in row0)) {
+        alert('This doesn\'t look like a Mind Influence Lab batch export CSV. Expected columns like rng_z_score, rng_protocol, phase_early_z. Please use the batch export from the vault (download icon in the app bar).');
+        return;
+      }
+      // Coerce numeric fields
+      allRows = results.data.map(r => ({
+        ...r,
+        rng_z_score:     parseFloat(r.rng_z_score)     || 0,
+        phase_early_z:   parseFloat(r.phase_early_z)   || 0,
+        phase_mid_z:     parseFloat(r.phase_mid_z)     || 0,
+        phase_late_z:    parseFloat(r.phase_late_z)    || 0,
+        coherence_score: parseFloat(r.coherence_score) || 0,
+        total_rng_ticks: parseInt(r.total_rng_ticks)   || 0,
+        total_rng_samples: parseInt(r.total_rng_samples) || 0,
+        convergence_events: parseInt(r.convergence_events) || 0,
+        energy:          parseFloat(r.energy)          || 0,
+        stress:          parseFloat(r.stress)          || 0,
+        duration_s:      parseInt(r.duration_s)        || 0,
+        mag_deviation_pct: parseFloat(r.mag_deviation_pct) || 0,
+      }));
+      // Sort by date ascending
+      allRows.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+      populateIntentionFilter();
+      applyFilters();
+      document.getElementById('analysis').style.display = 'block';
+      document.getElementById('analysis').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    error: function(err) {
+      alert('Failed to parse CSV: ' + err.message);
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FILTERS
+// ─────────────────────────────────────────────────────────────────────────────
+function populateIntentionFilter() {
+  const intentions = [...new Set(allRows.map(r => r.intention).filter(Boolean))].sort();
+  const sel = document.getElementById('filterProtocol').parentElement.parentElement;
+  // add intention filter dynamically if not present
+  if (!document.getElementById('filterIntention')) {
+    const g = document.createElement('div');
+    g.className = 'filter-group';
+    g.innerHTML = '<span class="filter-label">Intention</span><select class="filter-select" id="filterIntention" onchange="applyFilters()"><option value="all">All intentions</option>' +
+      intentions.map(i => `<option value="${i}">${i}</option>`).join('') + '</select>';
+    document.querySelector('.filter-bar').insertBefore(g, document.querySelector('.filter-reset'));
+  }
+}
+
+function applyFilters() {
+  const proto    = document.getElementById('filterProtocol')?.value || 'all';
+  const provider = document.getElementById('filterProvider')?.value || 'all';
+  const valid    = document.getElementById('filterValid')?.value    || 'all';
+  const coh      = parseFloat(document.getElementById('filterCoherence')?.value || '0');
+  const intent   = document.getElementById('filterIntention')?.value || 'all';
+
+  filtered = allRows.filter(r => {
+    if (proto    !== 'all' && r.rng_protocol   !== proto)                    return false;
+    if (provider !== 'all' && !r.dominant_source?.includes(provider))        return false;
+    if (valid    !== 'all' && r.is_valid        !== valid)                   return false;
+    if (intent   !== 'all' && r.intention       !== intent)                  return false;
+    if (r.coherence_score < coh)                                              return false;
+    return true;
+  });
+
+  document.getElementById('filterCount').textContent =
+    filtered.length + ' / ' + allRows.length + ' sessions';
+
+  renderAll();
+}
+
+function resetFilters() {
+  ['filterProtocol','filterProvider','filterValid','filterCoherence','filterIntention'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = 'all';
+  });
+  document.getElementById('filterCoherence').value = '0';
+  applyFilters();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER ALL
+// ─────────────────────────────────────────────────────────────────────────────
+function renderAll() {
+  renderStats();
+  renderCumulative();
+  renderDistribution();
+  renderPhase();
+  renderProtocol();
+  renderTodh();
+  renderIntention();
+  renderCoherence();
+  renderTable();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATS
+// ─────────────────────────────────────────────────────────────────────────────
+function renderStats() {
+  if (!filtered.length) return;
+  const n       = filtered.length;
+  const zScores = filtered.map(r => r.rng_z_score);
+  const avgZ    = zScores.reduce((a,b)=>a+b,0) / n;
+  const stouffer = zScores.reduce((a,b)=>a+b,0) / Math.sqrt(n);
+  const totalTicks = filtered.reduce((a,r)=>a+r.total_rng_ticks,0);
+  const totalSamples = filtered.reduce((a,r)=>a+r.total_rng_samples,0);
+  const qCount  = filtered.filter(r=>r.dominant_source?.startsWith('quantum')).length;
+  const convEvents = filtered.reduce((a,r)=>a+r.convergence_events,0);
+  const avgCoh  = filtered.reduce((a,r)=>a+r.coherence_score,0)/n;
+
+  const zColor  = stouffer > 1.96 ? '#00E5B0' : stouffer > 1.0 ? '#FF9F43' : 'rgba(255,255,255,0.65)';
+
+  document.getElementById('statGrid').innerHTML = [
+    { label:'Sessions',         value: n,                          sub:'in current filter', color:'rgba(255,255,255,0.65)' },
+    { label:'Avg Z-Score',      value: avgZ.toFixed(4),            sub:'per session mean',  color: avgZ>0?'#00E5B0':'#FF6B6B' },
+    { label:'Stouffer Z',       value: stouffer.toFixed(3),        sub:'combined significance', color: zColor },
+    { label:'Total Ticks',      value: fmtN(totalTicks),           sub:'independent events', color:'rgba(255,255,255,0.65)' },
+    { label:'Binary Samples',   value: fmtN(totalSamples),         sub:'total observations', color:'rgba(255,255,255,0.65)' },
+    { label:'Quantum Sessions', value: qCount+' / '+n,             sub:'quantum-sourced',   color:'rgba(0,229,176,0.75)' },
+    { label:'Avg Coherence',    value: avgCoh.toFixed(0),          sub:'session quality',   color: avgCoh>=70?'#00E5B0':avgCoh>=50?'#FF9F43':'#FF6B6B' },
+    { label:'Convergence',      value: convEvents,                 sub:'multi-channel events', color:'#B48CFF' },
+  ].map(s => `<div class="stat-card"><div class="stat-label">${s.label}</div><div class="stat-value" style="color:${s.color}">${s.value}</div><div class="stat-sub">${s.sub}</div></div>`).join('');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CHARTS
+// ─────────────────────────────────────────────────────────────────────────────
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+const gridCfg = {
+  color: CHART_DEFAULTS.grid,
+  drawBorder: false,
+};
+const tickCfg = {
+  color: CHART_DEFAULTS.tick,
+  font: { size: 9, family: "'Space Mono',monospace" },
+};
+
+function renderCumulative() {
+  destroyChart('cumulative');
+  const ctx = document.getElementById('chartCumulative').getContext('2d');
+  let cum = 0;
+  const data = filtered.map(r => { cum += r.rng_z_score; return parseFloat(cum.toFixed(4)); });
+  const labels = filtered.map((r,i) => '#'+(i+1));
+
+  charts.cumulative = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: 'rgba(0,229,176,0.75)',
+        backgroundColor: 'rgba(0,229,176,0.05)',
+        borderWidth: 1.5,
+        pointRadius: filtered.length > 30 ? 0 : 3,
+        pointBackgroundColor: 'rgba(0,229,176,0.8)',
+        fill: true,
+        tension: 0.3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => 'Cumulative Z: ' + c.raw } } },
+      scales: {
+        x: { grid: gridCfg, ticks: { ...tickCfg, maxTicksLimit: 8 } },
+        y: { grid: gridCfg, ticks: tickCfg,
+          afterDataLimits: axis => { const m = Math.max(Math.abs(axis.min), Math.abs(axis.max), 1); axis.min=-m; axis.max=m; } }
+      }
+    }
+  });
+}
+
+function renderDistribution() {
+  destroyChart('distribution');
+  const ctx = document.getElementById('chartDistribution').getContext('2d');
+  // Bin z-scores in 0.5-width bins from -4 to +4
+  const bins = [];
+  for (let v=-3.75; v<=4; v+=0.5) bins.push({ lo:v-0.25, hi:v+0.25, label:v.toFixed(2), count:0 });
+  filtered.forEach(r => {
+    const b = bins.find(b => r.rng_z_score >= b.lo && r.rng_z_score < b.hi);
+    if (b) b.count++;
+  });
+
+  charts.distribution = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: bins.map(b=>b.label),
+      datasets: [{
+        data: bins.map(b=>b.count),
+        backgroundColor: bins.map(b => parseFloat(b.label) > 0 ? 'rgba(0,229,176,0.55)' : 'rgba(255,107,107,0.45)'),
+        borderWidth: 0,
+        borderRadius: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: gridCfg, ticks: { ...tickCfg, maxTicksLimit: 10 } },
+        y: { grid: gridCfg, ticks: tickCfg, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function renderPhase() {
+  destroyChart('phase');
+  const ctx = document.getElementById('chartPhase').getContext('2d');
+  const labels = filtered.map((_,i)=>'#'+(i+1));
+  const pr = filtered.length > 30 ? 0 : 3;
+
+  charts.phase = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Early Z',
+          data: filtered.map(r=>r.phase_early_z),
+          borderColor: 'rgba(255,159,67,0.8)',
+          backgroundColor: 'rgba(255,159,67,0.04)',
+          borderWidth: 1.5, pointRadius: pr,
+          pointBackgroundColor: 'rgba(255,159,67,0.8)',
+          fill: false, tension: 0.3,
+        },
+        {
+          label: 'Late Z',
+          data: filtered.map(r=>r.phase_late_z),
+          borderColor: 'rgba(180,140,255,0.8)',
+          backgroundColor: 'rgba(180,140,255,0.04)',
+          borderWidth: 1.5, pointRadius: pr,
+          pointBackgroundColor: 'rgba(180,140,255,0.8)',
+          fill: false, tension: 0.3,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: true, labels: { color: CHART_DEFAULTS.tick, font: { size: 10 }, boxWidth: 12 } } },
+      scales: {
+        x: { grid: gridCfg, ticks: { ...tickCfg, maxTicksLimit: 10 } },
+        y: { grid: gridCfg, ticks: tickCfg }
+      }
+    }
+  });
+}
+
+function renderProtocol() {
+  destroyChart('protocol');
+  const ctx = document.getElementById('chartProtocol').getContext('2d');
+  const protos = ['live','buffered','localEntropy'];
+  const labels = ['Live Quantum','Buffered Quantum','Local Entropy'];
+  const colors = ['rgba(0,229,176,0.7)','rgba(0,184,212,0.7)','rgba(180,140,255,0.7)'];
+  const counts = protos.map(p => filtered.filter(r=>r.rng_protocol===p).length);
+  const avgZs  = protos.map(p => {
+    const rows = filtered.filter(r=>r.rng_protocol===p);
+    if (!rows.length) return 0;
+    return parseFloat((rows.reduce((a,r)=>a+r.rng_z_score,0)/rows.length).toFixed(4));
+  });
+
+  charts.protocol = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Sessions', data: counts, backgroundColor: colors, borderWidth:0, borderRadius:3, yAxisID:'y' },
+        { label: 'Avg Z', data: avgZs, type:'line', borderColor:'rgba(255,107,107,0.75)', pointBackgroundColor:'rgba(255,107,107,0.8)', borderWidth:1.5, pointRadius:5, yAxisID:'y2', fill:false }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: true, labels: { color: CHART_DEFAULTS.tick, font:{size:9}, boxWidth:10 } } },
+      scales: {
+        x: { grid: gridCfg, ticks: tickCfg },
+        y: { grid: gridCfg, ticks: tickCfg, title: { display:true, text:'Sessions', color: CHART_DEFAULTS.tick, font:{size:9} } },
+        y2: { position:'right', grid:{display:false}, ticks: tickCfg, title:{display:true,text:'Avg Z',color:CHART_DEFAULTS.tick,font:{size:9}} }
+      }
+    }
+  });
+}
+
+function renderTodh() {
+  destroyChart('todh');
+  const ctx = document.getElementById('chartTodh').getContext('2d');
+  const buckets = Array(24).fill(null).map(()=>[]);
+  filtered.forEach(r => {
+    const h = r.time ? parseInt(r.time.split(':')[0]) : null;
+    if (h !== null && !isNaN(h)) buckets[h].push(r.rng_z_score);
+  });
+  const avgs = buckets.map(b => b.length ? parseFloat((b.reduce((a,v)=>a+v,0)/b.length).toFixed(4)) : null);
+
+  charts.todh = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: Array.from({length:24},(_,i)=>i+'h'),
+      datasets: [{
+        data: avgs,
+        backgroundColor: avgs.map(v => v === null ? 'rgba(255,255,255,0.06)' : v > 0 ? 'rgba(0,229,176,0.65)' : 'rgba(255,107,107,0.45)'),
+        borderWidth: 0, borderRadius: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>c.raw===null?'No sessions':'Avg Z: '+c.raw}} },
+      scales: {
+        x: { grid: gridCfg, ticks: { ...tickCfg, maxTicksLimit: 12 } },
+        y: { grid: gridCfg, ticks: tickCfg }
+      }
+    }
+  });
+}
+
+function renderIntention() {
+  destroyChart('intention');
+  const ctx = document.getElementById('chartIntention').getContext('2d');
+  const intentionMap = {};
+  filtered.forEach(r => {
+    const k = r.intention?.trim() || 'unspecified';
+    if (!intentionMap[k]) intentionMap[k] = [];
+    intentionMap[k].push(r.rng_z_score);
+  });
+  const entries = Object.entries(intentionMap)
+    .map(([k,v]) => ({ k, avg: v.reduce((a,b)=>a+b,0)/v.length, n: v.length }))
+    .sort((a,b)=>b.avg-a.avg);
+
+  charts.intention = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: entries.map(e=>e.k.length>14?e.k.slice(0,13)+'…':e.k),
+      datasets: [{
+        data: entries.map(e=>parseFloat(e.avg.toFixed(4))),
+        backgroundColor: entries.map(e=>e.avg>0?'rgba(0,229,176,0.6)':'rgba(255,107,107,0.5)'),
+        borderWidth: 0, borderRadius: 3,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>'Avg Z: '+c.raw+' ('+entries[c.dataIndex].n+' sessions)'}} },
+      scales: {
+        x: { grid: gridCfg, ticks: tickCfg },
+        y: { grid: {display:false}, ticks: { ...tickCfg, font:{size:9,family:"'Space Mono',monospace"} } }
+      }
+    }
+  });
+}
+
+function renderCoherence() {
+  destroyChart('coherence');
+  const ctx = document.getElementById('chartCoherence').getContext('2d');
+  const points = filtered.map(r=>({x:r.coherence_score, y:r.rng_z_score}));
+
+  charts.coherence = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        data: points,
+        backgroundColor: 'rgba(0,229,176,0.45)',
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false} },
+      scales: {
+        x: { grid: gridCfg, ticks: tickCfg, title:{display:true,text:'Coherence Score',color:CHART_DEFAULTS.tick,font:{size:9}} },
+        y: { grid: gridCfg, ticks: tickCfg, title:{display:true,text:'Z-Score',color:CHART_DEFAULTS.tick,font:{size:9}} }
+      }
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TABLE
+// ─────────────────────────────────────────────────────────────────────────────
+let lastSort = { key:'date', asc:false };
+
+function sortTable(key) {
+  if (lastSort.key === key) lastSort.asc = !lastSort.asc;
+  else { lastSort.key = key; lastSort.asc = false; }
+  renderTable();
+}
+
+function renderTable() {
+  const sorted = [...filtered].sort((a,b) => {
+    let av = a[lastSort.key], bv = b[lastSort.key];
+    if (lastSort.key === 'date') { av = a.date+a.time; bv = b.date+b.time; }
+    const cmp = isNaN(av) ? String(av).localeCompare(String(bv)) : parseFloat(av)-parseFloat(bv);
+    return lastSort.asc ? cmp : -cmp;
+  });
+
+  document.getElementById('tableBody').innerHTML = sorted.map(r => {
+    const z = r.rng_z_score;
+    const zCls = z > 0.5 ? 'z-positive' : z < -0.5 ? 'z-negative' : 'z-neutral';
+    const src = r.dominant_source?.replace('quantum_','⚛ ').replace('local_entropy','≈ local') || '—';
+    const early = r.phase_early_z;
+    const late  = r.phase_late_z;
+    const declineCls = early > late ? 'z-positive' : early < late ? 'z-negative' : 'z-neutral';
+    return `<tr>
+      <td>${r.date || '—'}</td>
+      <td class="${zCls}">${z.toFixed(4)}</td>
+      <td style="color:rgba(255,255,255,0.4);font-size:10px">${r.rng_protocol || '—'}</td>
+      <td style="font-size:10px;color:rgba(0,229,176,0.6)">${src}</td>
+      <td style="color:rgba(255,255,255,0.4);font-size:11px">${r.intention || '—'}</td>
+      <td style="color:rgba(255,255,255,0.5)">${r.coherence_score || '—'}</td>
+      <td class="${declineCls}" style="font-size:11px">${early.toFixed(3)}</td>
+      <td class="${declineCls}" style="font-size:11px">${late.toFixed(3)}</td>
+      <td style="color:rgba(255,255,255,0.35);font-size:10px">${fmtN(r.total_rng_ticks)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UTIL
+// ─────────────────────────────────────────────────────────────────────────────
+function fmtN(n) {
+  if (!n || isNaN(n)) return '0';
+  return parseInt(n).toLocaleString();
+}
+</script>
+</body>
+</html>
