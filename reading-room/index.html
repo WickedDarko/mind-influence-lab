@@ -910,6 +910,20 @@ nav {
 <script>
 const ARTICLES = ['hub','pear','observer','heart','quantum','rng','consciousness','protocol','null','glossary'];
 
+// Per-article meta descriptions for SEO
+const ARTICLE_META = {
+  hub:           { title:'Reading Room', desc:'Nine in-depth articles on quantum RNG research, PEAR Lab experiments, consciousness science, retrocausality, and how to interpret your own session data.' },
+  pear:          { title:'What the Science Shows', desc:'An honest accounting of the PEAR laboratory findings, GCP data, and the criticisms that hold up — before exploring what remains genuinely open in mind-RNG research.' },
+  observer:      { title:'The Observer Effect', desc:'What "observer" actually means in quantum mechanics, and why the popular claim that physics validates consciousness research is a misreading of the formalism.' },
+  heart:         { title:'Heart Fields & Coherence', desc:'HeartMath research, bioelectromagnetics, and what the electromagnetic field of the heart physically means for consciousness research.' },
+  quantum:       { title:'Quantum Interpretations', desc:'Copenhagen, Many Worlds, and the Transactional Interpretation — and why the choice between them matters for how you interpret RNG experiment results.' },
+  rng:           { title:'The RNG Hypothesis', desc:'Three protocols testing three different hypotheses. Why local entropy and quantum RNG measure fundamentally different things in consciousness experiments.' },
+  consciousness: { title:'The Science of Consciousness', desc:'The hard problem, Integrated Information Theory, Orchestrated OR, Global Workspace Theory — and where each leaves the empirical research.' },
+  protocol:      { title:'Reading Your Results', desc:'What z-scores, phase analysis, coherence scores, and multi-channel convergence events actually mean statistically in the context of PEAR methodology.' },
+  null:          { title:'The Value of Null Results', desc:'Why finding nothing is finding something. The file drawer problem, Bayesian updating, and the scientific value of sitting with genuine uncertainty.' },
+  glossary:      { title:'Glossary', desc:'Key terms in consciousness research, quantum mechanics, and statistics — explained without jargon for researchers running their own experiments.' },
+};
+
 function show(id) {
   // panels
   document.querySelectorAll('.article-panel').forEach(p => p.classList.remove('active'));
@@ -921,20 +935,22 @@ function show(id) {
   const tab = document.querySelector('[data-id="' + id + '"]');
   if (tab) {
     tab.classList.add('active');
-    // colour the left border
     const color = tab.querySelector('.tab-tag')?.style.color || 'rgba(0,229,176,0.5)';
     tab.style.borderLeftColor = color;
-    // reset others
     document.querySelectorAll('.article-tab:not(.active)').forEach(t => t.style.borderLeftColor = 'transparent');
   }
 
   // URL hash
   history.replaceState(null, '', '#' + id);
 
-  // update page title
-  const titleEl = tab?.querySelector('.tab-title');
-  if (titleEl) document.title = titleEl.textContent + ' — Mind Influence Lab Reading Room';
-  else document.title = 'Reading Room — Mind Influence Lab';
+  // Update title and meta description per article — helps Google index each hash URL
+  const meta = ARTICLE_META[id] || ARTICLE_META.hub;
+  document.title = meta.title + ' — Mind Influence Lab Reading Room';
+  let descEl = document.querySelector('meta[name="description"]');
+  if (!descEl) { descEl = document.createElement('meta'); descEl.name='description'; document.head.appendChild(descEl); }
+  descEl.content = meta.desc;
+  let canonEl = document.querySelector('link[rel="canonical"]');
+  if (canonEl) canonEl.href = 'https://wickeddarko.github.io/mind-influence-lab/reading-room/' + (id !== 'hub' ? '#'+id : '');
 }
 
 // wire up sidebar tabs
